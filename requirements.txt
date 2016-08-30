@@ -1,0 +1,5 @@
+pefile
+python-magic
+yara-python
+virustotal-api
+gitpython
