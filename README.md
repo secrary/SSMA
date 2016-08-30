@@ -1,6 +1,6 @@
 # SSMA
 
-SSMA is simple malware analyzer written in Python 3. 
+SSMA is a simple malware analyzer written in Python 3. 
 ## Features:
 * Searches for websites, e-mail addresses, IP addresses in the strings of the file.
 
