@@ -29,5 +29,7 @@ pip install -r requirements.txt
 
 python3 ssma.py -h
 ```
+Additional:
+  ssdeep - [Installation](https://python-ssdeep.readthedocs.io/en/latest/installation.html)
 
 More: [Simple Static Malware Analyzer](https://secrary.com/SSMA)
