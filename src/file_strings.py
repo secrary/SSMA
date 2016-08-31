@@ -13,7 +13,7 @@ class get_strings:
             list_bytes = self.process(f)
             strings = []
             for n in list_bytes:
-                strings.append(str(n)[2:-1])
+                strings.append(n.decode())
         self.result = (is_website(strings), is_ip(strings), is_email(strings))
 
     def process(self, filename):
