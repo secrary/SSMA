@@ -25,7 +25,7 @@ git clone https://github.com/secrary/SSMA
 
 cd SSMA
 
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 
 python3 ssma.py -h
 ```
