@@ -23,7 +23,7 @@ SSMA is a simple malware analyzer written in Python 3.
 ```
 git clone https://github.com/secrary/SSMA
 
-cd SSMa
+cd SSMA
 
 pip install -r requirements.txt
 
