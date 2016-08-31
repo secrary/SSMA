@@ -83,7 +83,7 @@ class PEScanner:
             for imp in lib.imports:
                 ret.append(imp.name)
         for n in ret:
-            n = n.decode()
+            n = str(n)[2:-1]
             if any(map(n.startswith, self.alerts.keys())):
                 for a in self.alerts:
                     if n.startswith(a):
