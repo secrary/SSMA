@@ -6,7 +6,7 @@ class get_strings:
         self.chars = b"A-Za-z0-9!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~ "
         self.shortest_run = 4
         self.filename = filename
-        self.regexp = b'[%s]{%d,}' % (self.chars, self.shortest_run)
+        self.regexp = '[{}]{{{},}}'.format(self.chars.decode(), self.shortest_run).encode()
         self.pattern = re.compile(self.regexp)
 
         with open(self.filename, 'rb') as f:
