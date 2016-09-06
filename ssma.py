@@ -2,7 +2,7 @@
 
 import argparse
 import os
-from magic import Magic
+import magic
 from src import colors
 from src.check import is_malware, is_file_packed, check_crypto, is_antidb_antivm, is_malicious_document
 from src.check_file import PEScanner, file_info
@@ -24,15 +24,11 @@ if __name__ == '__main__':
     parser.add_argument("filename", help="/path/to/file")
     parser.add_argument("-k", "--api-key", help="Virustotal API key")
     parser.add_argument("-d", "--document", help="check document/MS Office file", action="store_true")
-    parser.add_argument("-u", "--update", help="Update SSMA", action="store_true")
+
     args = parser.parse_args()
     internet_connection = check_internet_connection()
-    if args.update and internet_connection:
-        try:
-            update_me()
-        except Exception as e:
-            print(e, '\n')
-    filetype = Magic(mime=True).from_file(args.filename)
+    
+    filetype = magic.from_file(args.filename, mime=True)
     if filetype == 'application/x-dosexec':
         pe = PEScanner(filename=args.filename)
         print(colors.BOLD + colors.YELLOW + "File Details: " + colors.RESET)
