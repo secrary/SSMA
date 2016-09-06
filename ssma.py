@@ -209,3 +209,4 @@ if __name__ == '__main__':
                 print(colors.BOLD + "\tNothing found" + colors.RESET)
                 print("================================================================================")
                 exit()
+    print(colors.YELLOW + "Ops... " + colors.CYAN + "That's all :)" + colors.RESET + "\n")
