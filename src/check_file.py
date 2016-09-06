@@ -18,7 +18,7 @@ class PEScanner:
     def __init__(self, filename):
         self.filename = filename
         self.pe = pefile.PE(self.filename)
-        self.mime = magic.Magic(mime=True)
+
         self.alerts = {
             'OpenProcess': "Opens a handle to another process running on the system. This handle can be used to read and write to the other process memory or to inject code into the other process.",
             'VirtualAllocEx': "A memory-allocation routine that can allocate memory in a remote process. Malware sometimes uses VirtualAllocEx as part of process injection",
@@ -66,7 +66,7 @@ class PEScanner:
             file = f.read()
             info.append("File: {}".format(self.filename))
             info.append("Size: {} bytes".format(os.path.getsize(self.filename)))
-            info.append("Type: {}".format(self.mime.from_file(self.filename)))
+            info.append("Type: {}".format(magic.from_file(self.filename, mime=True)))
             info.append("MD5: {}".format(hashlib.md5(file).hexdigest()))
             info.append("SHA1: {}".format(hashlib.sha1(file).hexdigest()))
             if ssdeep_r:
@@ -98,7 +98,7 @@ def file_info(filename):
         file = f.read()
         info.append("File: {}".format(filename))
         info.append("Size: {} bytes".format(os.path.getsize(filename)))
-        info.append("Type: {}".format(magic.Magic(mime=True).from_file(filename)))
+        info.append("Type: {}".format(magic.from_file(filename, mime=True)))
         info.append("MD5: {}".format(hashlib.md5(file).hexdigest()))
         info.append("SHA1: {}".format(hashlib.sha1(file).hexdigest()))
         if ssdeep_r:
