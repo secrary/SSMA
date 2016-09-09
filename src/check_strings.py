@@ -22,9 +22,6 @@ def is_website(list_of_strings):
         except:
             pass
 
-    for index, n in enumerate(list_of_web_addresses):
-        list_of_web_addresses[index] = n.rstrip("1234567890.-_")
-
     list_of_web_addresses = set(list_of_web_addresses)
 
     return list_of_web_addresses

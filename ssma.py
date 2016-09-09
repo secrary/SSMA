@@ -26,6 +26,7 @@ if __name__ == '__main__':
     parser.add_argument("-d", "--document", help="check document/MS Office file", action="store_true")
 
     args = parser.parse_args()
+    args.filename = os.getcwd() + "/" + args.filename
     internet_connection = check_internet_connection()
     py_file_location = os.path.dirname(__file__)
     if py_file_location:
