@@ -57,7 +57,7 @@ if __name__ == '__main__':
                 colors.BOLD + colors.YELLOW + "This file contains a list of Windows functions commonly used by malware.\nFor more information use the Microsoft documentation.\n" + colors.RESET)
 
             for n in check_imports_result:
-                n = n.split("-")
+                n = n.split("^")
                 print('\t' + colors.LIGHT_RED + n[0] + colors.RESET + " - " + n[1])
             print()
             print("================================================================================")

@@ -29,7 +29,7 @@ class PEScanner:
             'WinExec': "Used to execute another program. If malware creates a new process, you will need to analyze the new process as well.",
             'ShellExecute': "Used to execute another program. If malware creates a new process, you will need to analyze the new process as well.",
             'HttpSendRequest': "Suggest that the PE file uses HTTP",
-            'InternetReadFile': "Reads data from a previously opened URL",
+            'InternetReadFile': "Reads data from a previously opened URL.",
             'InternetWriteFile': "Writes data to a previously opened URL.",
             'InternetConnect': "PE file uses to establish connection",
             'CreateService': "Creates a service that can be started at boot time. Malware uses CreateService for persistence, stealth, or to load kernel drivers.",
@@ -176,7 +176,7 @@ class PEScanner:
             if any(map(n.startswith, self.alerts.keys())):
                 for a in self.alerts:
                     if n.startswith(a):
-                        ret2.append("{}-{}".format(n, self.alerts.get(a)))
+                        ret2.append("{}^{}".format(n, self.alerts.get(a)))
 
         return ret2
 
