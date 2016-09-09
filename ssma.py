@@ -113,13 +113,13 @@ if __name__ == '__main__':
         if mal_domains[1]:
             print("\t" + colors.RED + "Abuse.ch's Ransomware Domain Blocklist: " + colors.RESET)
             for n in mal_domains[1]:
-                print('\t\t', n)
+                print('\t', n)
             print()
         if mal_domains[2]:
             print(
                 "\t" + colors.RED + "A list of domains that are known to be used to propagate malware by http://www.malwaredomains.com/" + colors.RESET)
             for n in mal_domains[2]:
-                print('\t\t', n)
+                print('\t', n)
             print()
         print()
         print("================================================================================")
