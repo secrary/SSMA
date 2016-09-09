@@ -20,8 +20,3 @@ def download_yara_rules_git():
         g = git.cmd.Git("rules")
         g.pull()
 
-
-def update_me():  # git pull
-    g = git.cmd.Git(".")
-    g.pull()
-

@@ -1,4 +1,5 @@
 import re
+from urllib.parse import urlparse
 
 
 def is_ip(list_of_strings):
@@ -11,18 +12,22 @@ def is_ip(list_of_strings):
 
 
 def is_website(list_of_strings):
-    ipv4_pattern = re.compile(
-        r'^(?:http|ftp)s?://'  # http:// or https://
-        r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'  # domain...
-        r'localhost|'  # localhost...
-        r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}|'  # ...or ipv4
-        r'\[?[A-F0-9]*:[A-F0-9:]+\]?)'  # ...or ipv6
-        r'(?::\d+)?'  # optional port
-        r'(?:/?|[/?]\S+)$', re.IGNORECASE)
+    list_of_web_addresses = []
 
-    f = filter(ipv4_pattern.match, list_of_strings)
+    for n in list_of_strings:
+        try:
+            netloc = urlparse(n.split()[0]).netloc
+            if netloc and "." in netloc:
+                list_of_web_addresses.append(netloc)
+        except:
+            pass
 
-    return list(f)
+    for index, n in enumerate(list_of_web_addresses):
+        list_of_web_addresses[index] = n.rstrip("1234567890.-_")
+
+    list_of_web_addresses = set(list_of_web_addresses)
+
+    return list_of_web_addresses
 
 
 def is_email(list_of_strings):

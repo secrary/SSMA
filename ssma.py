@@ -6,7 +6,7 @@ import magic
 from src import colors
 from src.check import is_malware, is_file_packed, check_crypto, is_antidb_antivm, is_malicious_document
 from src.check_file import PEScanner, file_info
-from src.check_updates import check_internet_connection, download_yara_rules_git, update_me
+from src.check_updates import check_internet_connection, download_yara_rules_git
 from src.check_virustotal import virustotal
 from src.file_strings import get_strings
 
@@ -27,7 +27,9 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     internet_connection = check_internet_connection()
-    
+    py_file_location = os.path.dirname(__file__)
+    if py_file_location:
+        os.chdir(py_file_location)
     filetype = magic.from_file(args.filename, mime=True)
     if filetype == 'application/x-dosexec':
         pe = PEScanner(filename=args.filename)
@@ -53,7 +55,7 @@ if __name__ == '__main__':
                 colors.BOLD + colors.YELLOW + "This file contains a list of Windows functions commonly used by malware.\nFor more information use the Microsoft documentation.\n" + colors.RESET)
 
             for n in check_imports_result:
-                n = n.split(":")
+                n = n.split("-")
                 print('\t' + colors.LIGHT_RED + n[0] + colors.RESET + " - " + n[1])
             print()
             print("================================================================================")
