@@ -4,6 +4,7 @@ import argparse
 import os
 import magic
 from src import colors
+from src.blacklisted_domain_ip import ransomware_and_malware_domain_check
 from src.check import is_malware, is_file_packed, check_crypto, is_antidb_antivm, is_malicious_document
 from src.check_file import PEScanner, file_info
 from src.check_updates import check_internet_connection, download_yara_rules_git
@@ -26,7 +27,7 @@ if __name__ == '__main__':
     parser.add_argument("-d", "--document", help="check document/MS Office file", action="store_true")
 
     args = parser.parse_args()
-    args.filename = os.getcwd() + "/" + args.filename
+    args.filename = os.path.realpath(args.filename)
     internet_connection = check_internet_connection()
     py_file_location = os.path.dirname(__file__)
     if py_file_location:
@@ -104,16 +105,29 @@ if __name__ == '__main__':
 
     strings = get_strings(filename=args.filename).get_result()
     if strings[0]:
-        print(colors.BOLD + colors.YELLOW + "Website links in stings of file: " + colors.RESET)
-        for n in strings[0]:
+        print(colors.BOLD + colors.YELLOW + "Possible domains in stings of file: " + colors.RESET)
+        mal_domains = ransomware_and_malware_domain_check(list(strings[0]))
+        for n in mal_domains[0]:
             print('\t', n)
+        print()
+        if mal_domains[1]:
+            print("\t" + colors.RED + "Abuse.ch's Ransomware Domain Blocklist: " + colors.RESET)
+            for n in mal_domains[1]:
+                print('\t\t', n)
+            print()
+        if mal_domains[2]:
+            print(
+                "\t" + colors.RED + "A list of domains that are known to be used to propagate malware by http://www.malwaredomains.com/" + colors.RESET)
+            for n in mal_domains[2]:
+                print('\t\t', n)
+            print()
         print()
         print("================================================================================")
         if input("Continue? [Y/n] ") is 'n':
             exit()
         print()
     if strings[1]:
-        print(colors.BOLD + colors.YELLOW + "IP addresses in strings of file: " + colors.RESET)
+        print(colors.BOLD + colors.YELLOW + "Possible IP addresses in strings of file: " + colors.RESET)
         for n in strings[1]:
             print('\t', n)
         print()
@@ -122,7 +136,7 @@ if __name__ == '__main__':
             exit()
         print()
     if strings[2]:
-        print(colors.BOLD + colors.YELLOW + "E-Mail addresses in strings of file:" + colors.RESET)
+        print(colors.BOLD + colors.YELLOW + "Possoble E-Mail addresses in strings of file:" + colors.RESET)
         for n in strings[2]:
             print('\t', n)
         print()
