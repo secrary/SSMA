@@ -147,7 +147,7 @@ class PEScanner:
         pe_year = int(time.ctime(val).split()[-1])
         this_year = int(time.gmtime(time.time())[0])
         if pe_year > this_year or pe_year < 2000:
-            return colors.RED + " [SUSPICIOUS COMPILATION DATE] - {}".format(this_year) + colors.RESET
+            return colors.RED + " [SUSPICIOUS COMPILATION DATE] - {}".format(pe_year) + colors.RESET
 
     def file_info(self):
         info = []
