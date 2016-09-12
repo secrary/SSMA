@@ -1,5 +1,7 @@
 # SSMA
 
+[![Build Status](https://travis-ci.org/secrary/SSMA.svg?branch=master)](https://travis-ci.org/secrary/SSMA)
+
 SSMA is a simple malware analyzer written in Python 3. 
 ## Features:
 * Searches for possible domains, e-mail addresses, IP addresses in the strings of the file.
