@@ -1,8 +1,6 @@
 # SSMA
 
-[![Join the chat at https://gitter.im/simple_static_malware_analyzer/Lobby](https://badges.gitter.im/simple_static_malware_analyzer/Lobby.svg)](https://gitter.im/simple_static_malware_analyzer/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
-[![Build Status](https://travis-ci.org/secrary/SSMA.svg?branch=master)](https://travis-ci.org/secrary/SSMA)
+[![Join the chat at https://gitter.im/simple_static_malware_analyzer/Lobby](https://badges.gitter.im/simple_static_malware_analyzer/Lobby.svg)](https://gitter.im/simple_static_malware_analyzer/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)   [![Build Status](https://travis-ci.org/secrary/SSMA.svg?branch=master)](https://travis-ci.org/secrary/SSMA)
 
 SSMA is a simple malware analyzer written in Python 3. 
 ## Features:
