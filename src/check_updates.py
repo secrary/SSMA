@@ -1,4 +1,3 @@
-import os
 import socket
 import git
 
@@ -14,9 +13,5 @@ def check_internet_connection():
 
 
 def download_yara_rules_git():
-    if not os.listdir("rules"):
-        git.Git().clone("https://github.com/Yara-Rules/rules")
-    else:
-        g = git.cmd.Git("rules")
-        g.pull()
+    git.Git().clone("https://github.com/Yara-Rules/rules")
 

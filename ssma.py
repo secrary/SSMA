@@ -3,6 +3,8 @@
 import argparse
 import os
 import magic
+import shutil
+
 from src import colors
 from src.blacklisted_domain_ip import ransomware_and_malware_domain_check
 from src.check import is_malware, is_file_packed, check_crypto, is_antidb_antivm, is_malicious_document
@@ -78,7 +80,7 @@ if __name__ == '__main__':
         if virus_check[0] == "scan_result":
             print(colors.BOLD + colors.YELLOW + "Virustotal:" + colors.RESET)
             for n in virus_check[1]:
-                n = n.split("-")
+                n = n.split("^")
                 print('\t' + colors.CYAN + n[0] + colors.RESET + "-" + colors.LIGHT_RED + n[1] + colors.RESET)
             print()
             print("================================================================================")
@@ -157,7 +159,12 @@ if __name__ == '__main__':
             print()
         else:
             if input(
-                                            colors.BOLD + colors.GREEN + "Would you like to update Yara-Rules? [Y/n] " + colors.RESET) is not 'n':
+                                            colors.BOLD + colors.GREEN + "Would you like to ReDownload Yara-Rules? [y/N] " + colors.RESET) is 'y':
+                if os.path.exists("rules"):
+                    shutil.rmtree("rules")
+                if os.path.exists("rules_compiled"):
+                    shutil.rmtree("rules_compiled")
+                    os.mkdir("rules_compiled")
                 download_yara_rules_git()
                 print()
         if filetype == 'application/x-dosexec':
@@ -166,7 +173,10 @@ if __name__ == '__main__':
                 print(
                     colors.BOLD + colors.YELLOW + "These Yara rules specialised on the identification of well-known malware.\nResult: " + colors.RESET)
                 for n in malicious_software:
-                    print('\t', n)
+                    try:
+                        print("\t {} - {}".format(n, n.meta['description']))
+                    except:
+                        print('\t', n)
                 print()
                 print("================================================================================")
                 if input("Continue? [Y/n] ") is 'n':
@@ -177,7 +187,10 @@ if __name__ == '__main__':
                 print(
                     colors.BOLD + colors.YELLOW + "These Yara Rules aimed to detect well-known sofware packers, that can be used by malware to hide itself.\nResult: " + colors.RESET)
                 for n in packed:
-                    print('\t', n)
+                    try:
+                        print("\t {} - {}".format(n, n.meta['description']))
+                    except:
+                        print('\t', n)
                 print()
                 print("================================================================================")
                 if input("Continue? [Y/n] ") is 'n':
@@ -189,7 +202,10 @@ if __name__ == '__main__':
                     colors.BOLD + colors.YELLOW + "These Yara rules aimed to detect the existence of cryptographic algoritms." + colors.RESET)
                 print(colors.YELLOW + "Detected cryptographic algorithms: " + colors.RESET)
                 for n in crypto:
-                    print('\t', n)
+                    try:
+                        print("\t {} - {}".format(n, n.meta['description']))
+                    except:
+                        print('\t', n)
                 print()
                 print("================================================================================")
                 if input("Continue? [Y/n] ") is 'n':
@@ -200,7 +216,10 @@ if __name__ == '__main__':
                 print(
                     colors.BOLD + colors.YELLOW + "These Yara Rules aimed to detect anti-debug and anti-virtualization techniques used by malware to evade automated analysis.\nResult: " + colors.RESET)
                 for n in anti_vm:
-                    print('\t', n)
+                    try:
+                        print("\t {} - {}".format(n, n.meta['description']))
+                    except:
+                        print('\t', n)
                 print()
                 print("================================================================================")
                 if input("Continue? [Y/n] ") is 'n':
@@ -213,7 +232,10 @@ if __name__ == '__main__':
                 colors.BOLD + colors.YELLOW + "These Yara Rules to be used with documents to find if they have been crafted to leverage malicious code.\nResult: " + colors.RESET)
             if document_result:
                 for n in document_result:
-                    print('\t', n)
+                    try:
+                        print("\t {} - {}".format(n, n.meta['description']))
+                    except:
+                        print('\t', n)
                 print("================================================================================")
                 if input("Continue? [Y/n] ") is 'n':
                     exit()

@@ -4,7 +4,7 @@ SSMA is a simple malware analyzer written in Python 3.
 ## Features:
 * Searches for possible domains, e-mail addresses, IP addresses in the strings of the file.
 
-* Check if domains are blacklisted based on abuse.ch's Ransomware Domain Blocklist and malwaredomains.com's blocklist.
+* Checks if domains are blacklisted based on abuse.ch's Ransomware Domain Blocklist and malwaredomains.com's blocklist.
 
 * Looks for Windows functions commonly used by malware.
 

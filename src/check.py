@@ -23,7 +23,7 @@ def is_malicious_document(filename):
         rule = yara.load("rules_compiled/Malicious_Documents/" + n)
         m = rule.match(filename)
         if m:
-            m
+            return m
 
 
 def is_antidb_antivm(filename):
@@ -35,7 +35,7 @@ def is_antidb_antivm(filename):
         rule = yara.load("rules_compiled/Antidebug_AntiVM/" + n)
         m = rule.match(filename)
         if m:
-            m
+            return m
 
 
 def check_crypto(filename):

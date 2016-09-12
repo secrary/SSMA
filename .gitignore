@@ -87,3 +87,10 @@ ENV/
 
 # Rope project settings
 .ropeproject
+.idea/
+
+# SSMA
+rules/
+rules_compiled/
+/test.py
+/src/test.py

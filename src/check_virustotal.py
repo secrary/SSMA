@@ -19,7 +19,7 @@ def virustotal(filename, api_key):  # ("info", result[])
     if response_code_ == 1:
         for n in response["results"]["scans"]:
             if response["results"]["scans"][n]["detected"]:
-                result.append("{} - {}".format(n, response["results"]["scans"][n]["result"]))
+                result.append("{} ^ {}".format(n, response["results"]["scans"][n]["result"]))
     elif response_code_ == -2:
         pass
     else:
