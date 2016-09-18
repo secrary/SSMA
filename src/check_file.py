@@ -190,7 +190,7 @@ class PEScanner:
         print()
         print("{} {} {} {} {}".format(*"Section VirtualAddress VirtualSize SizeofRawData Entropy".split()))
         h_l_entropy = False
-        virt_size = []
+        virtual_size = []
         for section in self.pe.sections:
             entropy = section.get_entropy()
             for_section = False
@@ -198,7 +198,7 @@ class PEScanner:
                 h_l_entropy = True
                 for_section = True
             if section.Misc_VirtualSize / section.SizeOfRawData > 10:
-                virt_size.append((section.Name.strip(b"\x00").decode(), section.Misc_VirtualSize))
+                virtual_size.append((section.Name.strip(b"\x00").decode(), section.Misc_VirtualSize))
             print(
                 "{:7} {:14} {:11} {:13} {:7}".format(section.Name.strip(b"\x00").decode(), hex(section.VirtualAddress),
                                                      section.Misc_VirtualSize,
@@ -206,8 +206,8 @@ class PEScanner:
                                                      entropy if not for_section else colors.LIGHT_RED + str(
                                                          entropy) + colors.RESET))
         print()
-        if virt_size:
-            for n, m in virt_size:
+        if virtual_size:
+            for n, m in virtual_size:
                 print(colors.RED + '[SUSPICIOUS size of the section "{}" when stored in memory - {}'.format(n,
                                                                                                             m) + colors.RESET)
             print()
