@@ -197,8 +197,12 @@ class PEScanner:
             if entropy < 1 or entropy > 7:
                 h_l_entropy = True
                 for_section = True
-            if section.Misc_VirtualSize / section.SizeOfRawData > 10:
-                virtual_size.append((section.Name.strip(b"\x00").decode(), section.Misc_VirtualSize))
+            try:
+                if section.Misc_VirtualSize / section.SizeOfRawData > 10:
+                    virtual_size.append((section.Name.strip(b"\x00").decode(), section.Misc_VirtualSize))
+            except:
+                if section.SizeOfRawData == 0 and section.Misc_VirtualSize > 0:
+                    virtual_size.append((section.Name.strip(b"\x00").decode(), section.Misc_VirtualSize))
             print(
                 "{:7} {:14} {:11} {:13} {:7}".format(section.Name.strip(b"\x00").decode(), hex(section.VirtualAddress),
                                                      section.Misc_VirtualSize,
