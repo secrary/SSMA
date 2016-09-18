@@ -45,6 +45,11 @@ if __name__ == '__main__':
         if input("Continue? [Y/n] ") is 'n':
             exit()
         print()
+        pe.sections_analysis()
+        print("================================================================================")
+        if input("Continue? [Y/n] ") is 'n':
+            exit()
+        print()
         check_date_result = pe.check_date()
         if check_date_result:
             print(check_date_result)

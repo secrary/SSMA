@@ -172,13 +172,49 @@ class PEScanner:
             for imp in lib.imports:
                 ret.append(imp.name)
         for n in ret:
-            n = str(n)[2:-1]
-            if any(map(n.startswith, self.alerts.keys())):
-                for a in self.alerts:
-                    if n.startswith(a):
-                        ret2.append("{}^{}".format(n, self.alerts.get(a)))
+            if n:
+                n = n.decode()
+                if any(map(n.startswith, self.alerts.keys())):
+                    for a in self.alerts:
+                        if n.startswith(a):
+                            ret2.append("{}^{}".format(n, self.alerts.get(a)))
 
         return ret2
+
+    def sections_analysis(self):
+        number_of_section = self.pe.FILE_HEADER.NumberOfSections
+        if number_of_section < 1 or number_of_section > 9:
+            print(colors.RED + "[SUSPICIOUS NUMBER OF SECTIONS] - {}".format(number_of_section) + colors.RESET)
+        else:
+            print("Number of Sections:", number_of_section)
+        print()
+        print("{} {} {} {} {}".format(*"Section VirtualAddress VirtualSize SizeofRawData Entropy".split()))
+        h_l_entropy = False
+        virt_size = []
+        for section in self.pe.sections:
+            entropy = section.get_entropy()
+            for_section = False
+            if entropy < 1 or entropy > 7:
+                h_l_entropy = True
+                for_section = True
+            if section.Misc_VirtualSize / section.SizeOfRawData > 10:
+                virt_size.append((section.Name.strip(b"\x00").decode(), section.Misc_VirtualSize))
+            print(
+                "{:7} {:14} {:11} {:13} {:7}".format(section.Name.strip(b"\x00").decode(), hex(section.VirtualAddress),
+                                                     section.Misc_VirtualSize,
+                                                     section.SizeOfRawData,
+                                                     entropy if not for_section else colors.LIGHT_RED + str(
+                                                         entropy) + colors.RESET))
+        print()
+        if virt_size:
+            for n, m in virt_size:
+                print(colors.RED + '[SUSPICIOUS size of the section "{}" when stored in memory - {}'.format(n,
+                                                                                                            m) + colors.RESET)
+            print()
+        if h_l_entropy:
+            print(
+                colors.RED + "Very high or very low entropy means that file/section is compressed or encrypted since truly random data is not common." + colors.RESET)
+            print()
 
 
 def file_info(filename):
