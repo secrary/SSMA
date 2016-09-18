@@ -4,7 +4,7 @@
 
 SSMA is a simple malware analyzer written in Python 3. 
 ## Features:
-* Analyze PE file's sections (number of sections, entropy of sections)
+* Analyze PE file's sections (number of sections, entropy of sections, suspicious section names)
 
 * Searches for possible domains, e-mail addresses, IP addresses in the strings of the file.
 
