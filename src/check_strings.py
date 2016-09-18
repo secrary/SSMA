@@ -17,7 +17,7 @@ def is_website(list_of_strings):
     for n in list_of_strings:
         try:
             netloc = urlparse(n.split()[0]).netloc
-            if netloc and "." in netloc:
+            if netloc and "." in netloc and not netloc.startswith(".") and not netloc.endswith("."):
                 list_of_web_addresses.append(netloc)
         except:
             pass

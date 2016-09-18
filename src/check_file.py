@@ -182,6 +182,7 @@ class PEScanner:
         return ret2
 
     def sections_analysis(self):
+        good_sectoins = ['.data', '.text', '.code', '.reloc', '.idata', '.edata', '.rdata', '.bss', '.rsrc']
         number_of_section = self.pe.FILE_HEADER.NumberOfSections
         if number_of_section < 1 or number_of_section > 9:
             print(colors.RED + "[SUSPICIOUS NUMBER OF SECTIONS] - {}".format(number_of_section) + colors.RESET)
@@ -191,7 +192,10 @@ class PEScanner:
         print("{} {} {} {} {}".format(*"Section VirtualAddress VirtualSize SizeofRawData Entropy".split()))
         h_l_entropy = False
         virtual_size = []
+        section_names = []
         for section in self.pe.sections:
+            sec_name = section.Name.strip(b"\x00").decode()
+            section_names.append(sec_name)
             entropy = section.get_entropy()
             for_section = False
             if entropy < 1 or entropy > 7:
@@ -199,7 +203,7 @@ class PEScanner:
                 for_section = True
             try:
                 if section.Misc_VirtualSize / section.SizeOfRawData > 10:
-                    virtual_size.append((section.Name.strip(b"\x00").decode(), section.Misc_VirtualSize))
+                    virtual_size.append((sec_name, section.Misc_VirtualSize))
             except:
                 if section.SizeOfRawData == 0 and section.Misc_VirtualSize > 0:
                     virtual_size.append((section.Name.strip(b"\x00").decode(), section.Misc_VirtualSize))
@@ -212,12 +216,18 @@ class PEScanner:
         print()
         if virtual_size:
             for n, m in virtual_size:
-                print(colors.RED + '[SUSPICIOUS size of the section "{}" when stored in memory - {}'.format(n,
-                                                                                                            m) + colors.RESET)
+                print(colors.RED + 'SUSPICIOUS size of the section "{}" when stored in memory - {}'.format(n,
+                                                                                                           m) + colors.RESET)
             print()
         if h_l_entropy:
             print(
                 colors.RED + "Very high or very low entropy means that file/section is compressed or encrypted since truly random data is not common." + colors.RESET)
+            print()
+        bad_sections = [bad for bad in section_names if bad not in good_sectoins]
+        if bad_sections:
+            print(colors.RED + "SUSPICIOUS section names: " + colors.RESET, end='')
+            for n in bad_sections:
+                print(n, end=' ')
             print()
 
 
