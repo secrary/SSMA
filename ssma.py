@@ -50,6 +50,7 @@ if __name__ == '__main__':
         if input("Continue? [Y/n] ") is 'n':
             exit()
         print()
+        pe.check_file_header()
         check_date_result = pe.check_date()
         if check_date_result:
             print(check_date_result)

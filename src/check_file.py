@@ -1,7 +1,11 @@
 import hashlib
+import numbers
 import os
 import time
+
+import array
 import magic
+import math
 import pefile
 
 ssdeep_r = True
@@ -14,11 +18,45 @@ except:
 from src import colors
 
 
+def old_div(a, b):
+    """
+    Equivalent to ``a / b`` on Python 2 without ``from __future__ import
+    division``.
+
+    TODO: generalize this to other objects (like arrays etc.)
+    """
+    if isinstance(a, numbers.Integral) and isinstance(b, numbers.Integral):
+        return a // b
+    else:
+        return a / b
+
+
+def data_entropy(data):
+    """Calculate the entropy of a chunk of data."""
+
+    if len(data) == 0:
+        return 0.0
+
+    occurences = array.array('L', [0] * 256)
+
+    for x in data:
+        occurences[x if isinstance(x, int) else ord(x)] += 1
+
+    entropy = 0
+    for x in occurences:
+        if x:
+            p_x = old_div(float(x), len(data))
+            entropy -= p_x * math.log(p_x, 2)
+
+    return entropy
+
+
 class PEScanner:
     def __init__(self, filename):
         self.filename = filename
         self.pe = pefile.PE(self.filename)
-
+        with open(filename, 'rb') as pe_file:
+            self.pe_entropy = data_entropy(pe_file.read())
         self.alerts = {  # Practical Malware Analysis (2012) - Sikorski M., Honig A.
             'OpenProcess': "Opens a handle to another process running on the system. This handle can be used to read and write to the other process memory or to inject code into the other process.",
             'VirtualAllocEx': "A memory-allocation routine that can allocate memory in a remote process. Malware sometimes uses VirtualAllocEx as part of process injection",
@@ -151,6 +189,7 @@ class PEScanner:
 
     def file_info(self):
         info = []
+        low_high_entropy = self.pe_entropy < 1 or self.pe_entropy > 7
         with open(self.filename, 'rb') as f:
             file = f.read()
             info.append("File: {}".format(self.filename))
@@ -161,6 +200,11 @@ class PEScanner:
             if ssdeep_r:
                 info.append("ssdeep: {}".format(self.get_ssdeep()))
             info.append("Date: {}".format(time.ctime(self.pe.FILE_HEADER.TimeDateStamp)))
+            info.append("PE file entropy: {}".format(
+                self.pe_entropy if not low_high_entropy else colors.LIGHT_RED + str(self.pe_entropy) + colors.RESET))
+        if low_high_entropy:
+            info.append(
+                colors.RED + "Very high or very low entropy means that file is compressed or encrypted since truly random data is not common." + colors.RESET)
         return info
 
     def check_imports(self):
@@ -191,6 +235,7 @@ class PEScanner:
         print()
         print("{} {} {} {} {}".format(*"Section VirtualAddress VirtualSize SizeofRawData Entropy".split()))
         h_l_entropy = False
+        suspicious_size_of_raw_data = False
         virtual_size = []
         section_names = []
         for section in self.pe.sections:
@@ -206,6 +251,7 @@ class PEScanner:
                     virtual_size.append((sec_name, section.Misc_VirtualSize))
             except:
                 if section.SizeOfRawData == 0 and section.Misc_VirtualSize > 0:
+                    suspicious_size_of_raw_data = True
                     virtual_size.append((section.Name.strip(b"\x00").decode(), section.Misc_VirtualSize))
             print(
                 "{:7} {:14} {:11} {:13} {:7}".format(section.Name.strip(b"\x00").decode(), hex(section.VirtualAddress),
@@ -223,12 +269,37 @@ class PEScanner:
             print(
                 colors.RED + "Very high or very low entropy means that file/section is compressed or encrypted since truly random data is not common." + colors.RESET)
             print()
+        if suspicious_size_of_raw_data:
+            print(colors.RED + "Suspicious size of the raw data - 0\n" + colors.RESET)
         bad_sections = [bad for bad in section_names if bad not in good_sectoins]
         if bad_sections:
             print(colors.RED + "SUSPICIOUS section names: " + colors.RESET, end='')
             for n in bad_sections:
                 print(n, end=' ')
             print()
+
+    def check_file_header(self):
+        if self.pe.FILE_HEADER.PointerToSymbolTable > 0:
+            print(
+                colors.LIGHT_RED + "File contains some debug information, in majority of regular PE files, should not contain debug information" + colors.RESET + "\n")
+
+        flags = [("BYTES_REVERSED_LO", self.pe.FILE_HEADER.IMAGE_FILE_BYTES_REVERSED_LO,
+                  "Little endian: LSB precedes MSB in memory, deprecated and should be zero."),
+                 ("BYTES_REVERSED_HI", self.pe.FILE_HEADER.IMAGE_FILE_BYTES_REVERSED_HI,
+                  "Big endian: MSB precedes LSB in memory, deprecated and should be zero."),
+                 ("RELOCS_STRIPPED", self.pe.FILE_HEADER.IMAGE_FILE_RELOCS_STRIPPED,
+                  "This indicates that the file does not contain base relocations and must therefore be loaded at its preferred base address.\nFlag has the effect of disabling Address Space Layout Randomization(ASPR) for the process.")]
+        if any(tr[1] for tr in flags):
+            print(colors.LIGHT_RED + "Suspicious flags in the characters of the PE file: " + colors.RESET)
+            for n in flags:
+                if n[1]:
+                    print(colors.RED + n[0] + colors.RESET + " flag is set - {}".format(n[2]))
+            print()
+
+        print("================================================================================")
+        if input("Continue? [Y/n] ") is 'n':
+            exit()
+        print()
 
 
 def file_info(filename):
