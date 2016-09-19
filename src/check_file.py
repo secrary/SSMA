@@ -279,7 +279,9 @@ class PEScanner:
             print()
 
     def check_file_header(self):
+        continue_message = False
         if self.pe.FILE_HEADER.PointerToSymbolTable > 0:
+            continue_message = True
             print(
                 colors.LIGHT_RED + "File contains some debug information, in majority of regular PE files, should not contain debug information" + colors.RESET + "\n")
 
@@ -290,16 +292,17 @@ class PEScanner:
                  ("RELOCS_STRIPPED", self.pe.FILE_HEADER.IMAGE_FILE_RELOCS_STRIPPED,
                   "This indicates that the file does not contain base relocations and must therefore be loaded at its preferred base address.\nFlag has the effect of disabling Address Space Layout Randomization(ASPR) for the process.")]
         if any(tr[1] for tr in flags):
+            continue_message = True
             print(colors.LIGHT_RED + "Suspicious flags in the characteristics of the PE file: " + colors.RESET)
             for n in flags:
                 if n[1]:
                     print(colors.RED + n[0] + colors.RESET + " flag is set - {}".format(n[2]))
             print()
-
-        print("================================================================================")
-        if input("Continue? [Y/n] ") is 'n':
-            exit()
-        print()
+        if continue_message:
+            print("================================================================================")
+            if input("Continue? [Y/n] ") is 'n':
+                exit()
+            print()
 
 
 def file_info(filename):
