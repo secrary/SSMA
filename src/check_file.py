@@ -290,7 +290,7 @@ class PEScanner:
                  ("RELOCS_STRIPPED", self.pe.FILE_HEADER.IMAGE_FILE_RELOCS_STRIPPED,
                   "This indicates that the file does not contain base relocations and must therefore be loaded at its preferred base address.\nFlag has the effect of disabling Address Space Layout Randomization(ASPR) for the process.")]
         if any(tr[1] for tr in flags):
-            print(colors.LIGHT_RED + "Suspicious flags in the characters of the PE file: " + colors.RESET)
+            print(colors.LIGHT_RED + "Suspicious flags in the characteristics of the PE file: " + colors.RESET)
             for n in flags:
                 if n[1]:
                     print(colors.RED + n[0] + colors.RESET + " flag is set - {}".format(n[2]))
