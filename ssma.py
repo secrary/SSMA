@@ -113,7 +113,7 @@ if __name__ == '__main__':
 
     strings = get_strings(filename=args.filename).get_result()
     if strings[0]:
-        print(colors.BOLD + colors.YELLOW + "Possible domains in stings of file: " + colors.RESET)
+        print(colors.BOLD + colors.YELLOW + "Possible domains in strings of the file: " + colors.RESET)
         mal_domains = ransomware_and_malware_domain_check(list(strings[0]))
         for n in mal_domains[0]:
             print('\t', n)
@@ -135,7 +135,7 @@ if __name__ == '__main__':
             exit()
         print()
     if strings[1]:
-        print(colors.BOLD + colors.YELLOW + "Possible IP addresses in strings of file: " + colors.RESET)
+        print(colors.BOLD + colors.YELLOW + "Possible IP addresses in strings of the file: " + colors.RESET)
         for n in strings[1]:
             print('\t', n)
         print()
@@ -144,7 +144,7 @@ if __name__ == '__main__':
             exit()
         print()
     if strings[2]:
-        print(colors.BOLD + colors.YELLOW + "Possoble E-Mail addresses in strings of file:" + colors.RESET)
+        print(colors.BOLD + colors.YELLOW + "Possible E-Mail addresses in strings of the file:" + colors.RESET)
         for n in strings[2]:
             print('\t', n)
         print()
