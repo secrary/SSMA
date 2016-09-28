@@ -23,7 +23,6 @@ def old_div(a, b):
     Equivalent to ``a / b`` on Python 2 without ``from __future__ import
     division``.
 
-    TODO: generalize this to other objects (like arrays etc.)
     """
     if isinstance(a, numbers.Integral) and isinstance(b, numbers.Integral):
         return a // b
@@ -239,7 +238,7 @@ class PEScanner:
         virtual_size = []
         section_names = []
         for section in self.pe.sections:
-            sec_name = section.Name.strip(b"\x00").decode()
+            sec_name = section.Name.strip(b"\x00").decode(errors='ignore')
             section_names.append(sec_name)
             entropy = section.get_entropy()
             for_section = False
@@ -252,9 +251,9 @@ class PEScanner:
             except:
                 if section.SizeOfRawData == 0 and section.Misc_VirtualSize > 0:
                     suspicious_size_of_raw_data = True
-                    virtual_size.append((section.Name.strip(b"\x00").decode(), section.Misc_VirtualSize))
+                    virtual_size.append((section.Name.strip(b"\x00").decode(errors='ignore'), section.Misc_VirtualSize))
             print(
-                "{:7} {:14} {:11} {:13} {:7}".format(section.Name.strip(b"\x00").decode(), hex(section.VirtualAddress),
+                "{:7} {:14} {:11} {:13} {:7}".format(section.Name.strip(b"\x00").decode(errors='ignore'), hex(section.VirtualAddress),
                                                      section.Misc_VirtualSize,
                                                      section.SizeOfRawData,
                                                      entropy if not for_section else colors.LIGHT_RED + str(
