@@ -11,7 +11,7 @@ import pefile
 ssdeep_r = True
 try:
     import ssdeep
-except:
+except ImportError:
     ssdeep_r = False
     pass
 
@@ -175,7 +175,7 @@ class PEScanner:
     def get_ssdeep(self):
         try:
             return ssdeep.hash_from_file(self.filename)
-        except:
+        except ImportError:
             pass
         return ''
 
@@ -253,7 +253,8 @@ class PEScanner:
                     suspicious_size_of_raw_data = True
                     virtual_size.append((section.Name.strip(b"\x00").decode(errors='ignore'), section.Misc_VirtualSize))
             print(
-                "{:7} {:14} {:11} {:13} {:7}".format(section.Name.strip(b"\x00").decode(errors='ignore'), hex(section.VirtualAddress),
+                "{:7} {:14} {:11} {:13} {:7}".format(section.Name.strip(b"\x00").decode(errors='ignore'),
+                                                     hex(section.VirtualAddress),
                                                      section.Misc_VirtualSize,
                                                      section.SizeOfRawData,
                                                      entropy if not for_section else colors.LIGHT_RED + str(
