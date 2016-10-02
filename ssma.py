@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
 
+"""
+@author:       Lasha Khasaia
+@license:      GNU General Public License 3.0
+@contact:      @_qaz_qaz
+@Description:  SSMA - Simple Static Malware Analyzer
+"""
+
 import argparse
 import os
 import magic
