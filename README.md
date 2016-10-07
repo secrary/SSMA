@@ -35,6 +35,16 @@ sudo pip3 install -r requirements.txt
 
 python3 ssma.py -h
 ```
+## Using virtualenv
+```
+git clone https://github.com/secrary/SSMA
+cd SSMA
+virtualenv -p python3 env
+source env/bin/activate
+pip3 install -r requirements.txt
+python3 ssma.py -h
+```
+
 Additional:
   ssdeep - [Installation](https://python-ssdeep.readthedocs.io/en/latest/installation.html)
 
