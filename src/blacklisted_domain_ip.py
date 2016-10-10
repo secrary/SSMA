@@ -6,15 +6,16 @@ from urllib.parse import urlparse
 
 
 def ransomware_and_malware_domain_check(list_of_domains):
-
-    list_of = urllib.request.urlopen("https://ransomwaretracker.abuse.ch/downloads/RW_DOMBL.txt").read().decode().strip().split("\n")
-    list_of_mal_domains= []
+    list_of = urllib.request.urlopen(
+        "https://ransomwaretracker.abuse.ch/downloads/RW_DOMBL.txt").read().decode(errors='ignore').strip().split("\n")
+    list_of_mal_domains = []
 
     for n in list_of:
         if n and not n.startswith("#"):
             list_of_mal_domains.append(n.strip())
 
-    list_of = urllib.request.urlopen("https://ransomwaretracker.abuse.ch/downloads/RW_URLBL.txt").read().decode().strip().split("\n")
+    list_of = urllib.request.urlopen(
+        "https://ransomwaretracker.abuse.ch/downloads/RW_URLBL.txt").read().decode(errors='ignore').strip().split("\n")
     list_of_mal_urls = []
 
     for n in list_of:
@@ -28,7 +29,7 @@ def ransomware_and_malware_domain_check(list_of_domains):
 
     mal_in_my_domains = []
     for mal_dom in list_of:
-        for i,my_dom in enumerate(list_of_domains):
+        for i, my_dom in enumerate(list_of_domains):
             if mal_dom in my_dom:
                 mal_in_my_domains.append(mal_dom)
                 list_of_domains[i] = mal_dom
