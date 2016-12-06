@@ -1,21 +1,46 @@
 import os
 import urllib.request
 import zipfile
+from _socket import timeout
+from http.client import IncompleteRead
 from io import BytesIO
 from urllib.parse import urlparse
+import _socket
+
+_socket.setdefaulttimeout(10)  # set timeout
 
 
 def ransomware_and_malware_domain_check(list_of_domains):
-    list_of = urllib.request.urlopen(
-        "https://ransomwaretracker.abuse.ch/downloads/RW_DOMBL.txt").read().decode(errors='replace').strip().split("\n")
+    while True:
+        try:
+            list_of = urllib.request.urlopen(
+                "https://ransomwaretracker.abuse.ch/downloads/RW_DOMBL.txt").read().decode(
+                errors='replace').strip().split("\n")
+        except IncompleteRead:
+            continue
+        except timeout:
+            list_of = ""
+            break
+        break
+
     list_of_mal_domains = []
 
     for n in list_of:
         if n and not n.startswith("#"):
             list_of_mal_domains.append(n.strip())
 
-    list_of = urllib.request.urlopen(
-        "https://ransomwaretracker.abuse.ch/downloads/RW_URLBL.txt").read().decode(errors='replace').strip().split("\n")
+    while True:
+        try:
+            list_of = urllib.request.urlopen(
+                "https://ransomwaretracker.abuse.ch/downloads/RW_URLBL.txt").read().decode(
+                errors='replace').strip().split("\n")
+        except IncompleteRead:
+            continue
+        except timeout:
+            list_of = ""
+            break
+        break
+
     list_of_mal_urls = []
 
     for n in list_of:
