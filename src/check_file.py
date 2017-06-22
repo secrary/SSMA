@@ -238,7 +238,7 @@ class PEScanner:
         virtual_size = []
         section_names = []
         for section in self.pe.sections:
-            sec_name = section.Name.strip(b"\x00").decode(errors='ignore')
+            sec_name = section.Name.decode(errors='ignore').strip()
             section_names.append(sec_name)
             entropy = section.get_entropy()
             for_section = False
@@ -251,9 +251,9 @@ class PEScanner:
             except:
                 if section.SizeOfRawData == 0 and section.Misc_VirtualSize > 0:
                     suspicious_size_of_raw_data = True
-                    virtual_size.append((section.Name.strip(b"\x00").decode(errors='ignore'), section.Misc_VirtualSize))
+                    virtual_size.append((section.Name.decode(errors='ignore').strip(), section.Misc_VirtualSize))
             print(
-                "{:7} {:14} {:11} {:13} {:7}".format(section.Name.strip(b"\x00").decode(errors='ignore'),
+                "{:7} {:14} {:11} {:13} {:7}".format(section.Name.decode(errors='ignore').strip(),
                                                      hex(section.VirtualAddress),
                                                      section.Misc_VirtualSize,
                                                      section.SizeOfRawData,
