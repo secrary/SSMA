@@ -34,6 +34,7 @@ if __name__ == '__main__':
     parser.add_argument("filename", help="/path/to/file")
     parser.add_argument("-k", "--api-key", help="Virustotal API key")
     parser.add_argument("-d", "--document", help="check document/MS Office file", action="store_true")
+    parser.add_argument("-f", "--flush", help="Flush output, no interrupt (on/off)")
 
     args = parser.parse_args()
     args.filename = os.path.realpath(args.filename)
@@ -49,23 +50,32 @@ if __name__ == '__main__':
             print('\t', n)
         print()
         print("================================================================================")
-        if input("Continue? [Y/n] ") is 'n':
-            exit()
-        print()
+        if args.flush == "off":
+            if input("Continue? [Y/n] ") is 'n':
+                exit()
+            print()
+        else:
+            pass
         pe.sections_analysis()
         print("================================================================================")
-        if input("Continue? [Y/n] ") is 'n':
-            exit()
-        print()
-        pe.check_file_header()
+        if args.flush == "off":
+            if input("Continue? [Y/n] ") is 'n':
+                exit()
+            print()
+        else:
+            pass
+        pe.check_file_header(args.flush)
         check_date_result = pe.check_date()
         if check_date_result:
             print(check_date_result)
             print()
             print("================================================================================")
-            if input("Continue? [Y/n] ") is 'n':
-                exit()
-            print()
+            if args.flush == "off":
+                if input("Continue? [Y/n] ") is 'n':
+                    exit()
+                print()
+            else:
+                pass
         check_imports_result = pe.check_imports()
         if check_imports_result:
             print(
@@ -76,18 +86,24 @@ if __name__ == '__main__':
                 print('\t' + colors.LIGHT_RED + n[0] + colors.RESET + " - " + n[1])
             print()
             print("================================================================================")
-            if input("Continue? [Y/n] ") is 'n':
-                exit()
-            print()
+            if args.flush == "off":
+                if input("Continue? [Y/n] ") is 'n':
+                    exit()
+                print()
+            else:
+                pass
     else:
         print(colors.BOLD + colors.YELLOW + "File Details: " + colors.RESET)
         for n in file_info(args.filename):
             print('\t', n)
         print()
         print("================================================================================")
-        if input("Continue? [Y/n] ") is 'n':
-            exit()
-        print()
+        if args.flush == "off":
+            if input("Continue? [Y/n] ") is 'n':
+                exit()
+            print()
+        else:
+            pass
     if args.api_key and internet_connection:
         virus_check = virustotal(args.filename, args.api_key)
         if virus_check[0] == "scan_result":
@@ -97,9 +113,12 @@ if __name__ == '__main__':
                 print('\t' + colors.CYAN + n[0] + colors.RESET + "-" + colors.LIGHT_RED + n[1] + colors.RESET)
             print()
             print("================================================================================")
-            if input("Continue? [Y/n] ") is 'n':
-                exit()
-            print()
+            if args.flush == "off":
+                if input("Continue? [Y/n] ") is 'n':
+                    exit()
+                print()
+            else:
+                pass
         elif virus_check[0] == "permalink":
             if virus_check[1]:
                 print(colors.LIGHT_BLUE + "Your file is being analysed." + colors.RESET)
@@ -112,9 +131,12 @@ if __name__ == '__main__':
         elif not internet_connection:
             print(colors.RED + "No internet connection" + colors.RESET)
             print("================================================================================")
-            if input("Continue? [Y/n] ") is 'n':
-                exit()
-            print()
+            if args.flush == "off":
+                if input("Continue? [Y/n] ") is 'n':
+                    exit()
+                print()
+            else:
+                pass
         else:
             pass
 
@@ -138,27 +160,36 @@ if __name__ == '__main__':
             print()
         print()
         print("================================================================================")
-        if input("Continue? [Y/n] ") is 'n':
-            exit()
-        print()
+        if args.flush == "off":
+            if input("Continue? [Y/n] ") is 'n':
+                exit()
+            print()
+        else:
+            pass
     if strings[1]:
         print(colors.BOLD + colors.YELLOW + "Possible IP addresses in strings of the file: " + colors.RESET)
         for n in strings[1]:
             print('\t', n)
         print()
         print("================================================================================")
-        if input("Continue? [Y/n] ") is 'n':
-            exit()
-        print()
+        if args.flush == "off":
+            if input("Continue? [Y/n] ") is 'n':
+                exit()
+            print()
+        else:
+            pass
     if strings[2]:
         print(colors.BOLD + colors.YELLOW + "Possible E-Mail addresses in strings of the file:" + colors.RESET)
         for n in strings[2]:
             print('\t', n)
         print()
         print("================================================================================")
-        if input("Continue? [Y/n] ") is 'n':
-            exit()
-        print()
+        if args.flush == "off":
+            if input("Continue? [Y/n] ") is 'n':
+                exit()
+            print()
+        else:
+            pass
     if filetype == 'application/x-dosexec' or args.document:
         print(
             colors.BOLD + colors.YELLOW + "Scan file using Yara-rules.\nWith Yara rules you can create a \"description\" of malware families to detect new samples.\n" + colors.BOLD + colors.CYAN + "\tFor more information: https://virustotal.github.io/yara/\n" + colors.RESET)
@@ -192,9 +223,12 @@ if __name__ == '__main__':
                         print('\t', n)
                 print()
                 print("================================================================================")
-                if input("Continue? [Y/n] ") is 'n':
-                    exit()
-                print()
+                if args.flush == "off":
+                    if input("Continue? [Y/n] ") is 'n':
+                        exit()
+                    print()
+                else:
+                    pass
             packed = is_file_packed(filename=args.filename)
             if packed:
                 print(
@@ -206,9 +240,12 @@ if __name__ == '__main__':
                         print('\t', n)
                 print()
                 print("================================================================================")
-                if input("Continue? [Y/n] ") is 'n':
-                    exit()
-                print()
+                if args.flush == "off":
+                    if input("Continue? [Y/n] ") is 'n':
+                        exit()
+                    print()
+                else:
+                    pass
             crypto = check_crypto(filename=args.filename)
             if crypto:
                 print(
@@ -221,9 +258,12 @@ if __name__ == '__main__':
                         print('\t', n)
                 print()
                 print("================================================================================")
-                if input("Continue? [Y/n] ") is 'n':
-                    exit()
-                print()
+                if args.flush == "off":
+                    if input("Continue? [Y/n] ") is 'n':
+                        exit()
+                    print()
+                else:
+                    pass
             anti_vm = is_antidb_antivm(filename=args.filename)
             if anti_vm:
                 print(
@@ -235,9 +275,12 @@ if __name__ == '__main__':
                         print('\t', n)
                 print()
                 print("================================================================================")
-                if input("Continue? [Y/n] ") is 'n':
-                    exit()
-                print()
+                if args.flush == "off":
+                    if input("Continue? [Y/n] ") is 'n':
+                        exit()
+                    print()
+                else:
+                    pass
 
         if args.document:
             document_result = is_malicious_document(filename=args.filename)
@@ -250,9 +293,12 @@ if __name__ == '__main__':
                     except:
                         print('\t', n)
                 print("================================================================================")
-                if input("Continue? [Y/n] ") is 'n':
-                    exit()
-                print()
+                if args.flush == "off":
+                    if input("Continue? [Y/n] ") is 'n':
+                        exit()
+                    print()
+                else:
+                    pass
             else:
                 print(colors.BOLD + "\tNothing found" + colors.RESET)
                 print("================================================================================")
