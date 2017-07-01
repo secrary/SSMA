@@ -278,7 +278,7 @@ class PEScanner:
                 print(n, end=' ')
             print()
 
-    def check_file_header(self):
+    def check_file_header(self, flush):
         continue_message = False
         if self.pe.FILE_HEADER.PointerToSymbolTable > 0:
             continue_message = True
@@ -300,9 +300,12 @@ class PEScanner:
             print()
         if continue_message:
             print("================================================================================")
-            if input("Continue? [Y/n] ") is 'n':
-                exit()
-            print()
+            if flush == "off":
+                if input("Continue? [Y/n] ") is 'n':
+                    exit()
+                print()
+            else:
+                pass
 
 
 def file_info(filename):
