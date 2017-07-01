@@ -63,7 +63,7 @@ if __name__ == '__main__':
             print('\t', n)
         print()
         print("================================================================================")
-        if args.flush == "off":
+        if args.Flush == "off":
             if input("Continue? [Y/n] ") is 'n':
                 exit()
             print()
@@ -71,19 +71,19 @@ if __name__ == '__main__':
             pass
         pe.sections_analysis()
         print("================================================================================")
-        if args.flush == "off":
+        if args.Flush == "off":
             if input("Continue? [Y/n] ") is 'n':
                 exit()
             print()
         else:
             pass
-        pe.check_file_header(args.flush)
+        pe.check_file_header(args.Flush)
         check_date_result = pe.check_date()
         if check_date_result:
             print(check_date_result)
             print()
             print("================================================================================")
-            if args.flush == "off":
+            if args.Flush == "off":
                 if input("Continue? [Y/n] ") is 'n':
                     exit()
                 print()
@@ -99,7 +99,7 @@ if __name__ == '__main__':
                 print('\t' + colors.LIGHT_RED + n[0] + colors.RESET + " - " + n[1])
             print()
             print("================================================================================")
-            if args.flush == "off":
+            if args.Flush == "off":
                 if input("Continue? [Y/n] ") is 'n':
                     exit()
                 print()
@@ -111,7 +111,7 @@ if __name__ == '__main__':
             print('\t', n)
         print()
         print("================================================================================")
-        if args.flush == "off":
+        if args.Flush == "off":
             if input("Continue? [Y/n] ") is 'n':
                 exit()
             print()
@@ -126,7 +126,7 @@ if __name__ == '__main__':
                 print('\t' + colors.CYAN + n[0] + colors.RESET + "-" + colors.LIGHT_RED + n[1] + colors.RESET)
             print()
             print("================================================================================")
-            if args.flush == "off":
+            if args.Flush == "off":
                 if input("Continue? [Y/n] ") is 'n':
                     exit()
                 print()
@@ -144,7 +144,7 @@ if __name__ == '__main__':
         elif not internet_connection:
             print(colors.RED + "No internet connection" + colors.RESET)
             print("================================================================================")
-            if args.flush == "off":
+            if args.Flush == "off":
                 if input("Continue? [Y/n] ") is 'n':
                     exit()
                 print()
@@ -173,7 +173,7 @@ if __name__ == '__main__':
             print()
         print()
         print("================================================================================")
-        if args.flush == "off":
+        if args.Flush == "off":
             if input("Continue? [Y/n] ") is 'n':
                 exit()
             print()
@@ -185,7 +185,7 @@ if __name__ == '__main__':
             print('\t', n)
         print()
         print("================================================================================")
-        if args.flush == "off":
+        if args.Flush == "off":
             if input("Continue? [Y/n] ") is 'n':
                 exit()
             print()
@@ -197,7 +197,7 @@ if __name__ == '__main__':
             print('\t', n)
         print()
         print("================================================================================")
-        if args.flush == "off":
+        if args.Flush == "off":
             if input("Continue? [Y/n] ") is 'n':
                 exit()
             print()
@@ -228,7 +228,7 @@ if __name__ == '__main__':
                         print('\t', n)
                 print()
                 print("================================================================================")
-                if args.flush == "off":
+                if args.Flush == "off":
                     if input("Continue? [Y/n] ") is 'n':
                         exit()
                     print()
@@ -245,7 +245,7 @@ if __name__ == '__main__':
                         print('\t', n)
                 print()
                 print("================================================================================")
-                if args.flush == "off":
+                if args.Flush == "off":
                     if input("Continue? [Y/n] ") is 'n':
                         exit()
                     print()
@@ -263,7 +263,7 @@ if __name__ == '__main__':
                         print('\t', n)
                 print()
                 print("================================================================================")
-                if args.flush == "off":
+                if args.Flush == "off":
                     if input("Continue? [Y/n] ") is 'n':
                         exit()
                     print()
@@ -280,7 +280,7 @@ if __name__ == '__main__':
                         print('\t', n)
                 print()
                 print("================================================================================")
-                if args.flush == "off":
+                if args.Flush == "off":
                     if input("Continue? [Y/n] ") is 'n':
                         exit()
                     print()
@@ -298,7 +298,7 @@ if __name__ == '__main__':
                     except:
                         print('\t', n)
                 print("================================================================================")
-                if args.flush == "off":
+                if args.Flush == "off":
                     if input("Continue? [Y/n] ") is 'n':
                         exit()
                     print()
