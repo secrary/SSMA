@@ -31,12 +31,25 @@ print(colors.CYAN + """
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Simple Static Malware Analyzer")
-    parser.add_argument("filename", help="/path/to/file")
+    parser.add_argument("-f", "--filename", help="/path/to/file")
     parser.add_argument("-k", "--api-key", help="Virustotal API key")
     parser.add_argument("-d", "--document", help="check document/MS Office file", action="store_true")
-    parser.add_argument("-f", "--flush", help="Flush output, no interrupt (on/off)")
+    parser.add_argument("-F", "--Flush", help="Flush output, no interrupt (on/off)")
+    parser.add_argument("-u", "--update", help="Update Yara-Rules (yes/no)")
 
     args = parser.parse_args()
+    if args.update == "yes" and not args.filename:
+        if os.path.exists("rules"):
+            shutil.rmtree("rules")
+        if os.path.exists("rules_compiled"):
+            shutil.rmtree("rules_compiled")
+            os.mkdir("rules_compiled")
+        print(colors.BOLD + colors.CYAN + "[-] Updating Yara-Rules..." + colors.RESET)
+        download_yara_rules_git()
+        print(colors.BOLD + colors.GREEN + "[+] Updated for Yara-Rules!" + colors.RESET)
+        exit()
+    else:
+        pass
     args.filename = os.path.realpath(args.filename)
     internet_connection = check_internet_connection()
     py_file_location = os.path.dirname(__file__)
@@ -202,15 +215,7 @@ if __name__ == '__main__':
             download_yara_rules_git()
             print()
         else:
-            if input(
-                                            colors.BOLD + colors.GREEN + "Would you like to ReDownload Yara-Rules? [y/N] " + colors.RESET) is 'y':
-                if os.path.exists("rules"):
-                    shutil.rmtree("rules")
-                if os.path.exists("rules_compiled"):
-                    shutil.rmtree("rules_compiled")
-                    os.mkdir("rules_compiled")
-                download_yara_rules_git()
-                print()
+            pass
         if filetype == 'application/x-dosexec':
             malicious_software = is_malware(filename=args.filename)
             if malicious_software:
