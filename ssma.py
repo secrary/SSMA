@@ -38,7 +38,7 @@ if __name__ == '__main__':
     parser.add_argument("-u", "--update", help="Update Yara-Rules (yes/no)")
 
     args = parser.parse_args()
-    if args.update == "yes" and not args.filename:
+    if args.update == "yes":
         if os.path.exists("rules"):
             shutil.rmtree("rules")
         if os.path.exists("rules_compiled"):
@@ -47,9 +47,18 @@ if __name__ == '__main__':
         print(colors.BOLD + colors.CYAN + "[-] Updating Yara-Rules..." + colors.RESET)
         download_yara_rules_git()
         print(colors.BOLD + colors.GREEN + "[+] Updated for Yara-Rules!" + colors.RESET)
-        exit()
+        print()
+        if not args.filename:
+            exit()
+        else:
+            pass
     else:
         pass
+    try:
+        os.path.realpath(args.filename)
+    except:
+        print(colors.BOLD + colors.RED + "No option selected, run ssma.py -h")
+        exit()
     args.filename = os.path.realpath(args.filename)
     internet_connection = check_internet_connection()
     py_file_location = os.path.dirname(__file__)
