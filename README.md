@@ -49,3 +49,7 @@ Additional:
   ssdeep - [Installation](https://python-ssdeep.readthedocs.io/en/latest/installation.html)
 
 More: [Simple Static Malware Analyzer](https://secrary.com/SSMA)
+
+
+## Contributors
+* [pielco11](https://github.com/pielco11)
