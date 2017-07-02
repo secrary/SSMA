@@ -53,3 +53,4 @@ More: [Simple Static Malware Analyzer](https://secrary.com/SSMA)
 
 ## Contributors
 * [pielco11](https://github.com/pielco11)
+* [firmianay](https://github.com/firmianay)
