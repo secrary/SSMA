@@ -7,6 +7,7 @@ import array
 import magic
 import math
 import pefile
+import elftools
 
 ssdeep_r = True
 try:
@@ -306,6 +307,13 @@ class PEScanner:
                 print()
             else:
                 pass
+
+
+# Added by Yang
+# TODO
+class ELFScanner:
+    def __init__(self, filename):
+        self.filename = filename
 
 
 def file_info(filename):

@@ -66,3 +66,21 @@ def is_malware(filename):
                 pass  # internal fatal error or warning
         else:
             pass
+
+# Added by Yang
+def is_your_target(filename, yara_file):
+    if not os.path.exists("rules_compiled/your_target"):
+        os.mkdir("rules_compiled/your_target")
+    for n in os.listdir(yara_file):
+        if not os.path.isdir("./" + n):
+            try:
+                rule = yara.compile(yara_file + "/" + n)
+                rule.save("rules_compiled/your_target/" + n)
+                rule = yara.load("rules_compiled/malware/" + n)
+                m = rule.match(filename)
+                if m:
+                    return m
+            except:
+                pass
+        else:
+            pass
