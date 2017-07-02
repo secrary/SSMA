@@ -15,7 +15,7 @@ import elftools
 
 from src import colors
 from src.blacklisted_domain_ip import ransomware_and_malware_domain_check
-from src.check import is_malware, is_file_packed, check_crypto, is_antidb_antivm, is_malicious_document
+from src.check import is_malware, is_file_packed, check_crypto, is_antidb_antivm, is_malicious_document, is_your_target
 from src.check_file import PEScanner, ELFScanner, file_info
 from src.check_updates import check_internet_connection, download_yara_rules_git
 from src.check_virustotal import virustotal
@@ -37,6 +37,7 @@ if __name__ == '__main__':
     parser.add_argument("-d", "--document", help="check document/MS Office file", action="store_true")
     parser.add_argument("-F", "--Flush", help="Flush output, no interrupt (on/off)")
     parser.add_argument("-u", "--update", help="Update Yara-Rules (yes/no)")
+    parser.add_argument("-y", "--yara", help="Scan file with your Yara-Rule")
 
     args = parser.parse_args()
     if args.update == "yes":
@@ -305,6 +306,25 @@ if __name__ == '__main__':
                     print()
                 else:
                     pass
+            if args.yara:
+                yara = str(os.path.realpath(args.yara))
+                your_target = is_your_target(args.filename, yara)
+                if your_target:
+                    print(
+                        colors.BOLD + colors.YELLOW + "These Yara Rules are created by yourself and aimed to detecte something you need.\nResult: " + colors.RESET)
+                    for n in your_target:
+                        try:
+                            print("\t {} - {}".format(n, n.meta['description']))
+                        except:
+                            print('\t', n)
+                    print()
+                    print("================================================================================")
+                    if args.Flush == "off":
+                        if input("Continue? [Y/n] ") is 'n':
+                            exit()
+                        print()
+                    else:
+                        pass
 
         if args.document:
             document_result = is_malicious_document(filename=args.filename)
