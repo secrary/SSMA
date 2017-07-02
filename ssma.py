@@ -11,11 +11,12 @@ import argparse
 import os
 import magic
 import shutil
+import elftools
 
 from src import colors
 from src.blacklisted_domain_ip import ransomware_and_malware_domain_check
 from src.check import is_malware, is_file_packed, check_crypto, is_antidb_antivm, is_malicious_document
-from src.check_file import PEScanner, file_info
+from src.check_file import PEScanner, ELFScanner, file_info
 from src.check_updates import check_internet_connection, download_yara_rules_git
 from src.check_virustotal import virustotal
 from src.file_strings import get_strings
@@ -114,6 +115,15 @@ if __name__ == '__main__':
                 print()
             else:
                 pass
+
+    # ELF file -> Linux malware
+    # Added by Yang
+    # TODO
+    elif filetype == 'application/x-executable':
+        elf = ELFScanner(filename=args.filename)
+        print(colors.BOLD + colors.YELLOW + "File Details: " + colors.RESET)
+        pass
+
     else:
         print(colors.BOLD + colors.YELLOW + "File Details: " + colors.RESET)
         for n in file_info(args.filename):
@@ -212,7 +222,7 @@ if __name__ == '__main__':
             print()
         else:
             pass
-    if filetype == 'application/x-dosexec' or args.document:
+    if filetype == 'application/x-dosexec' or filetype == 'application/x-executable' or args.document:
         print(
             colors.BOLD + colors.YELLOW + "Scan file using Yara-rules.\nWith Yara rules you can create a \"description\" of malware families to detect new samples.\n" + colors.BOLD + colors.CYAN + "\tFor more information: https://virustotal.github.io/yara/\n" + colors.RESET)
         if not os.path.exists("rules"):

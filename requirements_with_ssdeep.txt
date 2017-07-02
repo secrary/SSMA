@@ -4,3 +4,4 @@ yara-python
 ssdeep
 virustotal-api
 gitpython
+pyelftools
