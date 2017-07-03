@@ -20,6 +20,7 @@ from src.check_file import PEScanner, ELFScanner, file_info
 from src.check_updates import check_internet_connection, download_yara_rules_git
 from src.check_virustotal import virustotal
 from src.file_strings import get_strings
+from src.mass_analysis import start_scan
 
 print(colors.CYAN + """
 ███████╗███████╗███╗   ███╗ █████╗
@@ -38,6 +39,8 @@ if __name__ == '__main__':
     parser.add_argument("-F", "--Flush", help="Flush output, no interrupt (on/off)")
     parser.add_argument("-u", "--update", help="Update Yara-Rules (yes/no)")
     parser.add_argument("-y", "--yara", help="Scan file with your Yara-Rule")
+    parser.add_argument("--directory", help="Mass analysis from a dir (/path/)")
+    parser.add_argument("-r", "--report", help="Generate json format report")
 
     args = parser.parse_args()
     if args.update == "yes":
@@ -59,11 +62,24 @@ if __name__ == '__main__':
     try:
         os.path.realpath(args.filename)
     except:
-        print(colors.BOLD + colors.RED + "No option selected, run ssma.py -h")
-        exit()
-    args.filename = os.path.realpath(args.filename)
+        try:
+            os.path.realpath(args.directory)
+        except:
+            print(colors.BOLD + colors.RED + "No option selected, run ssma.py -h")
+            exit()
+
     internet_connection = check_internet_connection()
     py_file_location = os.path.dirname(__file__)
+
+    # Added by Yang
+    if args.directory and not args.filename:
+        start_scan(args)
+        exit()
+    else:
+        print(colors.BOLD + colors.RED + "option error, please select a file or directory, run ssma.py -h")
+        exit()
+
+    args.filename = os.path.realpath(args.filename)
     if py_file_location:
         os.chdir(py_file_location)
     filetype = magic.from_file(args.filename, mime=True)
