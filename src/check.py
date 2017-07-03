@@ -67,6 +67,7 @@ def is_malware(filename):
         else:
             pass
 
+
 # Added by Yang
 def is_your_target(filename, yara_file):
     if not os.path.exists("rules_compiled/your_target"):
