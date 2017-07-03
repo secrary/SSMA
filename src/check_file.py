@@ -207,6 +207,17 @@ class PEScanner:
                 colors.RED + "Very high or very low entropy means that file is compressed or encrypted since truly random data is not common." + colors.RESET)
         return info
 
+    def checkTSL(self, flush):
+        _tls = self.pe.OPTIONAL_HEADER.DATA_DIRECTORY[
+            pefile.DIRECTORY_ENTRY['IMAGE_DIRECTORY_ENTRY_TLS']].VirtualAddress
+        if _tls:
+            print(colors.RED + "The executable contains a .tls section.\n" + colors.RESET + "A TLS callback can be used to execute code before the entry point \
+and therefore execute secretly in a debugger.")
+            if flush == "off":
+                if input("Continue? [Y/n] ") is 'n':
+                    exit()
+            print()
+
     def check_imports(self):
         ret = []
         ret2 = []
@@ -284,14 +295,17 @@ class PEScanner:
         if self.pe.FILE_HEADER.PointerToSymbolTable > 0:
             continue_message = True
             print(
-                colors.LIGHT_RED + "File contains some debug information, in majority of regular PE files, should not contain debug information" + colors.RESET + "\n")
+                colors.LIGHT_RED + "File contains some debug information, in majority of regular PE files, should not "
+                                   "contain debug information" + colors.RESET + "\n")
 
         flags = [("BYTES_REVERSED_LO", self.pe.FILE_HEADER.IMAGE_FILE_BYTES_REVERSED_LO,
                   "Little endian: LSB precedes MSB in memory, deprecated and should be zero."),
                  ("BYTES_REVERSED_HI", self.pe.FILE_HEADER.IMAGE_FILE_BYTES_REVERSED_HI,
                   "Big endian: MSB precedes LSB in memory, deprecated and should be zero."),
                  ("RELOCS_STRIPPED", self.pe.FILE_HEADER.IMAGE_FILE_RELOCS_STRIPPED,
-                  "This indicates that the file does not contain base relocations and must therefore be loaded at its preferred base address.\nFlag has the effect of disabling Address Space Layout Randomization(ASPR) for the process.")]
+                  "This indicates that the file does not contain base relocations and must therefore be loaded at its "
+                  "preferred base address.\nFlag has the effect of disabling Address Space Layout Randomization(ASLR) "
+                  "for the process.")]
         if any(tr[1] for tr in flags):
             continue_message = True
             print(colors.LIGHT_RED + "Suspicious flags in the characteristics of the PE file: " + colors.RESET)

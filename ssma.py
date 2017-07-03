@@ -94,17 +94,17 @@ if __name__ == '__main__':
         if args.Flush == "off":
             if input("Continue? [Y/n] ") is 'n':
                 exit()
-            print()
-        else:
-            pass
+        print()
+
         pe.sections_analysis()
         print("================================================================================")
         if args.Flush == "off":
             if input("Continue? [Y/n] ") is 'n':
                 exit()
-            print()
-        else:
-            pass
+        print()
+
+        pe.checkTSL(args.Flush)
+
         pe.check_file_header(args.Flush)
         check_date_result = pe.check_date()
         if check_date_result:
@@ -114,9 +114,8 @@ if __name__ == '__main__':
             if args.Flush == "off":
                 if input("Continue? [Y/n] ") is 'n':
                     exit()
-                print()
-            else:
-                pass
+            print()
+
         check_imports_result = pe.check_imports()
         if check_imports_result:
             print(
@@ -130,9 +129,7 @@ if __name__ == '__main__':
             if args.Flush == "off":
                 if input("Continue? [Y/n] ") is 'n':
                     exit()
-                print()
-            else:
-                pass
+            print()
 
         if args.report:
             if not os.path.exists("analysis_report"):
@@ -164,8 +161,6 @@ if __name__ == '__main__':
             if input("Continue? [Y/n] ") is 'n':
                 exit()
             print()
-        else:
-            pass
 
         if args.report:
             if not os.path.exists("analysis_report"):
@@ -185,9 +180,8 @@ if __name__ == '__main__':
             if args.Flush == "off":
                 if input("Continue? [Y/n] ") is 'n':
                     exit()
-                print()
-            else:
-                pass
+            print()
+
         elif virus_check[0] == "permalink":
             if virus_check[1]:
                 print(colors.LIGHT_BLUE + "Your file is being analysed." + colors.RESET)
@@ -203,11 +197,7 @@ if __name__ == '__main__':
             if args.Flush == "off":
                 if input("Continue? [Y/n] ") is 'n':
                     exit()
-                print()
-            else:
-                pass
-        else:
-            pass
+            print()
 
     strings = get_strings(filename=args.filename).get_result()
     if strings[0]:
@@ -232,9 +222,8 @@ if __name__ == '__main__':
         if args.Flush == "off":
             if input("Continue? [Y/n] ") is 'n':
                 exit()
-            print()
-        else:
-            pass
+        print()
+
     if strings[1]:
         print(colors.BOLD + colors.YELLOW + "Possible IP addresses in strings of the file: " + colors.RESET)
         for n in strings[1]:
@@ -244,9 +233,8 @@ if __name__ == '__main__':
         if args.Flush == "off":
             if input("Continue? [Y/n] ") is 'n':
                 exit()
-            print()
-        else:
-            pass
+        print()
+
     if strings[2]:
         print(colors.BOLD + colors.YELLOW + "Possible E-Mail addresses in strings of the file:" + colors.RESET)
         for n in strings[2]:
@@ -256,9 +244,8 @@ if __name__ == '__main__':
         if args.Flush == "off":
             if input("Continue? [Y/n] ") is 'n':
                 exit()
-            print()
-        else:
-            pass
+        print()
+
     if filetype == 'application/x-dosexec' or filetype == 'application/x-executable' or args.document:
         print(
             colors.BOLD + colors.YELLOW + "Scan file using Yara-rules.\nWith Yara rules you can create a \"description\" of malware families to detect new samples.\n" + colors.BOLD + colors.CYAN + "\tFor more information: https://virustotal.github.io/yara/\n" + colors.RESET)
@@ -287,9 +274,8 @@ if __name__ == '__main__':
                 if args.Flush == "off":
                     if input("Continue? [Y/n] ") is 'n':
                         exit()
-                    print()
-                else:
-                    pass
+                print()
+
             packed = is_file_packed(filename=args.filename)
             if packed:
                 print(
@@ -304,9 +290,8 @@ if __name__ == '__main__':
                 if args.Flush == "off":
                     if input("Continue? [Y/n] ") is 'n':
                         exit()
-                    print()
-                else:
-                    pass
+                print()
+
             crypto = check_crypto(filename=args.filename)
             if crypto:
                 print(
@@ -322,9 +307,8 @@ if __name__ == '__main__':
                 if args.Flush == "off":
                     if input("Continue? [Y/n] ") is 'n':
                         exit()
-                    print()
-                else:
-                    pass
+                print()
+
             anti_vm = is_antidb_antivm(filename=args.filename)
             if anti_vm:
                 print(
@@ -339,9 +323,8 @@ if __name__ == '__main__':
                 if args.Flush == "off":
                     if input("Continue? [Y/n] ") is 'n':
                         exit()
-                    print()
-                else:
-                    pass
+                print()
+
             if args.yara:
                 yara = str(os.path.realpath(args.yara))
                 your_target = is_your_target(args.filename, yara)
@@ -358,9 +341,7 @@ if __name__ == '__main__':
                     if args.Flush == "off":
                         if input("Continue? [Y/n] ") is 'n':
                             exit()
-                        print()
-                    else:
-                        pass
+                    print()
 
         if args.document:
             document_result = is_malicious_document(filename=args.filename)
@@ -376,9 +357,8 @@ if __name__ == '__main__':
                 if args.Flush == "off":
                     if input("Continue? [Y/n] ") is 'n':
                         exit()
-                    print()
-                else:
-                    pass
+                print()
+
             else:
                 print(colors.BOLD + "\tNothing found" + colors.RESET)
                 print("================================================================================")
