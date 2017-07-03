@@ -16,27 +16,34 @@ from src.check_file import PEScanner, ELFScanner, file_info
 from src.check_updates import check_internet_connection, download_yara_rules_git
 from src.check_virustotal import virustotal
 from src.file_strings import get_strings
-from src.report import report
+from src.pe_report import pe_report, elf_report, others_report
 
 
 def start_scan(args):
-    list = os.listdir(args.directory)
+    dir = os.path.abspath(args.directory)
+    list = os.listdir(dir)
     if list:
-        try:
-            for l in list:
-                filename = os.path.realpath(l)
-                filetype = magic.from_file(args.filename, mime=True)
+        for root, _, filenames in os.walk(dir):
+            for file in filenames:
+                filename = os.path.join(root, file)
+                filetype = magic.from_file(filename, mime=True)
+
+                if not os.path.exists("analysis_report"):
+                    os.mkdir("analysis_report")
                 if filetype == 'application/x-dosexec':
                     pe = PEScanner(filename=filename)
+
+                    file_report = pe_report(pe)
+                    file_report.write()
+
                 elif filetype == 'application/x-executable':
                     elf = ELFScanner(filename=filename)
+
+                    file_report = elf_report(elf)
+                    file_report.write()
+
                 else:
                     file = file_info(filename)
 
-                file_report = report(filename)
-                if not os.path.exists("analysis_report"):
-                    os.mkdir("analysis_report")
-                report.write(file_report)
-
-        except:
-            pass
+                    file_report = others_report(file)
+                    file_report.write()

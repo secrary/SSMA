@@ -21,6 +21,7 @@ from src.check_updates import check_internet_connection, download_yara_rules_git
 from src.check_virustotal import virustotal
 from src.file_strings import get_strings
 from src.mass_analysis import start_scan
+from src.pe_report import pe_report, elf_report, others_report
 
 print(colors.CYAN + """
 ███████╗███████╗███╗   ███╗ █████╗
@@ -40,7 +41,7 @@ if __name__ == '__main__':
     parser.add_argument("-u", "--update", help="Update Yara-Rules (yes/no)")
     parser.add_argument("-y", "--yara", help="Scan file with your Yara-Rule")
     parser.add_argument("--directory", help="Mass analysis from a dir (/path/)")
-    parser.add_argument("-r", "--report", help="Generate json format report")
+    parser.add_argument("-r", "--report", help="Generate json format report (yes/no)")
 
     args = parser.parse_args()
     if args.update == "yes":
@@ -69,16 +70,16 @@ if __name__ == '__main__':
             exit()
 
     internet_connection = check_internet_connection()
-    py_file_location = os.path.dirname(__file__)
 
     # Added by Yang
     if args.directory and not args.filename:
         start_scan(args)
         exit()
-    else:
+    elif args.directory and args.filename:
         print(colors.BOLD + colors.RED + "option error, please select a file or directory, run ssma.py -h")
         exit()
 
+    py_file_location = os.path.dirname(__file__)
     args.filename = os.path.realpath(args.filename)
     if py_file_location:
         os.chdir(py_file_location)
@@ -133,12 +134,24 @@ if __name__ == '__main__':
             else:
                 pass
 
+        if args.report:
+            if not os.path.exists("analysis_report"):
+                os.mkdir("analysis_report")
+            file_report = pe_report(pe)
+            file_report.write()
+
     # ELF file -> Linux malware
     # Added by Yang
     # TODO
     elif filetype == 'application/x-executable':
         elf = ELFScanner(filename=args.filename)
         print(colors.BOLD + colors.YELLOW + "File Details: " + colors.RESET)
+
+        if args.report:
+            if not os.path.exists("analysis_report"):
+                os.mkdir("analysis_report")
+            file_report = elf_report(elf)
+            file_report.write()
         pass
 
     else:
@@ -153,6 +166,13 @@ if __name__ == '__main__':
             print()
         else:
             pass
+
+        if args.report:
+            if not os.path.exists("analysis_report"):
+                os.mkdir("analysis_report")
+            file_report = others_report(file_info(args.filename))
+            file_report.write()
+
     if args.api_key and internet_connection:
         virus_check = virustotal(args.filename, args.api_key)
         if virus_check[0] == "scan_result":
