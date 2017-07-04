@@ -6,6 +6,7 @@ Added by Yang
 import os
 import json
 
+
 # TODO
 class pe_report:
     def __init__(self, pe):
@@ -29,11 +30,14 @@ class pe_report:
         with open("analysis_report/" + os.path.basename(self.filename) + ".json", "w") as f:
             json.dump(obj, f, indent=4)
 
+
 class elf_report:
     def __init__(self, elf):
         pass
+
     def write(self):
         pass
+
 
 class others_report:
     def __init__(self, other):
