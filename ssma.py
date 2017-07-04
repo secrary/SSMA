@@ -191,13 +191,13 @@ if __name__ == '__main__':
                 if input("Continue? [Y/n] ") is 'n':
                     exit()
                 print()
-        elif not internet_connection:
-            print(colors.RED + "No internet connection" + colors.RESET)
-            print("================================================================================")
-            if args.Flush == "off":
-                if input("Continue? [Y/n] ") is 'n':
-                    exit()
-            print()
+    elif args.api_key and not internet_connection:
+        print(colors.RED + "No internet connection" + colors.RESET)
+        print("================================================================================")
+        if args.Flush == "off":
+            if input("Continue? [Y/n] ") is 'n':
+                exit()
+        print()
 
     strings = get_strings(filename=args.filename).get_result()
     if strings[0]:
