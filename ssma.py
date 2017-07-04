@@ -40,7 +40,7 @@ if __name__ == '__main__':
     parser.add_argument("-F", "--Flush", help="Flush output, no interrupt (on/off)")
     parser.add_argument("-u", "--update", help="Update Yara-Rules (yes/no)")
     parser.add_argument("-y", "--yara", help="Scan file with your Yara-Rule")
-    parser.add_argument("--directory", help="Mass analysis from a dir (/path/)")
+    parser.add_argument("-D", "--directory", help="Mass analysis from a dir (/path/)")
     parser.add_argument("-r", "--report", help="Generate json format report (yes/no)")
 
     args = parser.parse_args()
