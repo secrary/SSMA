@@ -103,9 +103,38 @@ if __name__ == '__main__':
                 exit()
         print()
 
-        pe.checkTSL(args.Flush)
+        _tls = pe.checkTSL()
+        if _tls is not None:
+            print(colors.RED + "The executable contains a .tls section.\n" + colors.RESET + "A TLS callback can be used to execute code before the entry point \
+            and therefore execute secretly in a debugger.")
+            print("================================================================================")
+            if args.Flush == "off":
+                if input("Continue? [Y/n] ") is 'n':
+                    exit()
+            print()
 
-        pe.check_file_header(args.Flush)
+        check_file_header = pe.check_file_header()
+        continue_message = False
+        if check_file_header["debug"] == True:
+            continue_message = True
+            print(
+                colors.LIGHT_RED + "File contains some debug information, in majority of regular PE files, should not "
+                                   "contain debug information" + colors.RESET + "\n")
+
+        if any(tr[1] for tr in check_file_header["flags"]):
+            continue_message = True
+            print(colors.LIGHT_RED + "Suspicious flags in the characteristics of the PE file: " + colors.RESET)
+            for n in check_file_header["flags"]:
+                if n[1]:
+                    print(colors.RED + n[0] + colors.RESET + " flag is set - {}".format(n[2]))
+            print()
+        if continue_message:
+            print("================================================================================")
+            if args.Flush == "off":
+                if input("Continue? [Y/n] ") is 'n':
+                    exit()
+            print()
+
         check_date_result = pe.check_date()
         if check_date_result:
             print(check_date_result)

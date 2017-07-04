@@ -207,16 +207,13 @@ class PEScanner:
                 colors.RED + "Very high or very low entropy means that file is compressed or encrypted since truly random data is not common." + colors.RESET)
         return info
 
-    def checkTSL(self, flush):
+    def checkTSL(self):
         _tls = self.pe.OPTIONAL_HEADER.DATA_DIRECTORY[
             pefile.DIRECTORY_ENTRY['IMAGE_DIRECTORY_ENTRY_TLS']].VirtualAddress
         if _tls:
-            print(colors.RED + "The executable contains a .tls section.\n" + colors.RESET + "A TLS callback can be used to execute code before the entry point \
-and therefore execute secretly in a debugger.")
-            if flush == "off":
-                if input("Continue? [Y/n] ") is 'n':
-                    exit()
-            print()
+            return _tls
+        else:
+            return None
 
     def check_imports(self):
         ret = []
@@ -290,10 +287,13 @@ and therefore execute secretly in a debugger.")
                 print(n, end=' ')
             print()
 
-    def check_file_header(self, flush):
+    def check_file_header(self):
         continue_message = False
+
+        debug = False
         if self.pe.FILE_HEADER.PointerToSymbolTable > 0:
             continue_message = True
+            debug = True
             print(
                 colors.LIGHT_RED + "File contains some debug information, in majority of regular PE files, should not "
                                    "contain debug information" + colors.RESET + "\n")
@@ -306,22 +306,10 @@ and therefore execute secretly in a debugger.")
                   "This indicates that the file does not contain base relocations and must therefore be loaded at its "
                   "preferred base address.\nFlag has the effect of disabling Address Space Layout Randomization(ASLR) "
                   "for the process.")]
-        if any(tr[1] for tr in flags):
-            continue_message = True
-            print(colors.LIGHT_RED + "Suspicious flags in the characteristics of the PE file: " + colors.RESET)
-            for n in flags:
-                if n[1]:
-                    print(colors.RED + n[0] + colors.RESET + " flag is set - {}".format(n[2]))
-            print()
-        if continue_message:
-            print("================================================================================")
-            if flush == "off":
-                if input("Continue? [Y/n] ") is 'n':
-                    exit()
-                print()
-            else:
-                pass
-
+        return {
+            "debug": debug,
+            "flags": flags
+        }
 
 # Added by Yang
 # TODO
