@@ -340,6 +340,7 @@ if __name__ == '__main__':
                 print("\t\t\""+str(n)+"\": \"True\",")
                 total+=1
             print("\t\t\"Total\": "+str(total))
+            print("\t}")
         else:
             print(colors.BOLD + colors.YELLOW + "Possible E-Mail addresses in strings of the file:" + colors.RESET)
             for n in strings[2]:
