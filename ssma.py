@@ -207,7 +207,6 @@ if __name__ == '__main__':
             if not os.path.exists("analysis_report"):
                 os.mkdir("analysis_report")
             file_report = pe_report(pe, args.report)
-            file_report.write()
 
     # ELF file -> Linux malware
     # Added by Yang
@@ -220,7 +219,6 @@ if __name__ == '__main__':
             if not os.path.exists("analysis_report"):
                 os.mkdir("analysis_report")
             file_report = elf_report(elf)
-            file_report.write()
         pass
 
     else:
@@ -238,7 +236,6 @@ if __name__ == '__main__':
             if not os.path.exists("analysis_report"):
                 os.mkdir("analysis_report")
             file_report = others_report(file_info(args.filename))
-            file_report.write()
 
     if args.api_key and internet_connection:
         virus_check = virustotal(args.filename, args.api_key)
@@ -434,6 +431,7 @@ if __name__ == '__main__':
                             exit()
                     print()
 
+                your_target = {}
                 if args.yara:
                     yara = str(os.path.realpath(args.yara))
                     your_target = is_your_target(args.filename, yara)
@@ -452,12 +450,58 @@ if __name__ == '__main__':
                                 exit()
                         print()
 
+                if args.report:
+                    malicious_software_result = {}
+                    packed_result = {}
+                    crypto_result = {}
+                    anti_vm_result = {}
+                    your_target_result = {}
+                    if malicious_software:
+                        for n in malicious_software:
+                            try:
+                                malicious_software_result[str(n)] = n.meta['description']
+                            except:
+                                malicious_software_result[str(n)] = None
+                    if packed:
+                        for n in packed:
+                            try:
+                                packed_result[str(n)] = n.meta['description']
+                            except:
+                                packed_result[str(n)] = None
+                    if crypto:
+                        for n in crypto:
+                            try:
+                                crypto_result[str(n)] = n.meta['description']
+                            except:
+                                crypto_result[str(n)] = None
+                    if anti_vm:
+                        for n in anti_vm:
+                            try:
+                                anti_vm_result[str(n)] = n.meta['description']
+                            except:
+                                anti_vm_result[str(n)] = None
+                    if your_target:
+                        for n in your_target:
+                            try:
+                                your_target_result[str(n)] = n.meta['description']
+                            except:
+                                your_target_result[str(n)] = None
+                    yara_result = {
+                        "malicious_software": malicious_software_result,
+                        "packed": packed_result,
+                        "crypto": crypto_result,
+                        "anti_vm": anti_vm_result,
+                        "your_target": your_target_result
+                    }
+                    file_report.yara(yara_result)
+                    file_report.write()
+
             if args.document:
-                document_result = is_malicious_document(filename=args.filename)
+                malicious_document = is_malicious_document(filename=args.filename)
                 print(
                     colors.BOLD + colors.YELLOW + "These Yara Rules to be used with documents to find if they have been crafted to leverage malicious code.\nResult: " + colors.RESET)
-                if document_result:
-                    for n in document_result:
+                if malicious_document:
+                    for n in malicious_document:
                         try:
                             print("\t {} - {}".format(n, n.meta['description']))
                         except:
@@ -467,6 +511,21 @@ if __name__ == '__main__':
                         if input("Continue? [Y/n] ") is 'n':
                             exit()
                     print()
+
+
+                if args.report:
+                    malicious_document_result = {}
+                    if malicious_document:
+                        for n in malicious_document:
+                            try:
+                                malicious_document_result[str(n)] = n['description']
+                            except:
+                                malicious_document_result[str(n)] = None
+                    yara_result = {
+                        "malicious_document": malicious_document_result
+                    }
+                    file_report.yara(yara_result)
+                    file_report.write()
 
                 else:
                     print(colors.BOLD + "\tNothing found" + colors.RESET)
