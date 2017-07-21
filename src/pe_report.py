@@ -9,14 +9,14 @@ import json
 
 # TODO
 class pe_report:
-    def __init__(self, pe):
+    def __init__(self, pe, report):
         self.filename = pe.filename
-        self.file_info = pe.file_info()
+        self.file_info = pe.file_info(report)
         self._tsl = pe.checkTSL()
         self.check_imports = pe.check_imports()
         self.check_date = pe.check_date()
         # self.sections_analysis = pe.sections_analysis()
-        self.check_file_header = pe.check_file_header()
+        self.check_file_header = pe.check_file_header(report)
 
     def write(self):
         obj = {
