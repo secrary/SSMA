@@ -262,6 +262,7 @@ class PEScanner:
         suspicious_size_of_raw_data = False
         virtual_size = []
         section_names = []
+        sections = {}
         for section in self.pe.sections:
             sec_name = section.Name.decode(errors='ignore').strip()
             section_names.append(sec_name)
@@ -287,6 +288,16 @@ class PEScanner:
                                                      section.SizeOfRawData,
                                                      entropy if not for_section else colors.LIGHT_RED + str(
                                                          entropy) + colors.RESET))
+            section_info = {
+                "Section": sec_name,
+                "VirtualAddress": hex(section.VirtualAddress),
+                "VirtualSize": section.Misc_VirtualSize,
+                "SizeofRawData": section.SizeOfRawData,
+                "Entropy": entropy
+            }
+            sections[sec_name] = section_info
+
+        suspicious = {}
         if report == "output":
             pass #TODO
         else:
@@ -296,18 +307,29 @@ class PEScanner:
                     print(colors.RED + 'SUSPICIOUS size of the section "{}" when stored in memory - {}'.format(n,
                                                                                                            m) + colors.RESET)
                 print()
+                suspicious["suspicious_size_of_the_section"] = virtual_size
             if h_l_entropy:
                 print(
                     colors.RED + "Very high or very low entropy means that file/section is compressed or encrypted since truly random data is not common." + colors.RESET)
                 print()
+                suspicious["h_l_entropy"] = "Very high or very low entropy means that file/section is compressed or encrypted since truly random data is not common."
             if suspicious_size_of_raw_data:
                 print(colors.RED + "Suspicious size of the raw data - 0\n" + colors.RESET)
+                suspicious["suspicious_size_of_raw_data"] = "yes"
             bad_sections = [bad for bad in section_names if bad not in good_sectoins]
             if bad_sections:
                 print(colors.RED + "SUSPICIOUS section names: " + colors.RESET, end='')
                 for n in bad_sections:
                     print(n, end=' ')
                 print()
+                suspicious["bad_sections"] = bad_sections
+
+        sections_result = {
+            "number_of_section": number_of_section,
+            "sections": sections,
+            "suspicious": suspicious
+        }
+        return sections_result
 
     def check_file_header(self, report):
         continue_message = False

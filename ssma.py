@@ -37,9 +37,9 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     if args.report == "output":
-    	pass
+        pass
     else:
-    	print(colors.CYAN + """
+        print(colors.CYAN + """
 ███████╗███████╗███╗   ███╗ █████╗
 ██╔════╝██╔════╝████╗ ████║██╔══██╗ Simple
 ███████╗███████╗██╔████╔██║███████║ Static
@@ -99,7 +99,7 @@ if __name__ == '__main__':
             else:
                 print('\t',n)
         if args.report == "output":
-        	print("\t},")
+            print("\t},")
         else:
             print()
             print("================================================================================")
@@ -108,7 +108,7 @@ if __name__ == '__main__':
                     exit()
             print()
 
-        pe.sections_analysis(args.report)
+        sections = pe.sections_analysis(args.report)
         if args.report == "output":
             pass
         else:
@@ -349,6 +349,19 @@ if __name__ == '__main__':
                     exit()
             print()
 
+    if args.report:
+        mal_domains = ransomware_and_malware_domain_check(list(strings[0]))
+        domains = {
+            "normal_domains": list(mal_domains[0]),
+            "malware_domains": list(mal_domains[1]) + list(mal_domains[2])
+        }
+        strings_result = {
+            "Domains": domains,
+            "IP-addresses": strings[1],
+            "Email": strings[2]
+        }
+        file_report.domains(strings_result)
+
     if filetype == 'application/x-dosexec' or filetype == 'application/x-executable' or args.document:
         if args.report == "output":
             pass
@@ -496,6 +509,40 @@ if __name__ == '__main__':
                     file_report.yara(yara_result)
                     file_report.write()
 
+            if filetype == 'application/x-executable':
+                your_target = {}
+                if args.yara:
+                    yara = str(os.path.realpath(args.yara))
+                    your_target = is_your_target(args.filename, yara)
+                    if your_target:
+                        print(
+                            colors.BOLD + colors.YELLOW + "These Yara Rules are created by yourself and aimed to detecte something you need.\nResult: " + colors.RESET)
+                        for n in your_target:
+                            try:
+                                print("\t {} - {}".format(n, n.meta['description']))
+                            except:
+                                print('\t', n)
+                        print()
+                        print("================================================================================")
+                        if args.Flush == "off":
+                            if input("Continue? [Y/n] ") is 'n':
+                                exit()
+                        print()
+
+                if args.report:
+                    your_target_result = {}
+                    if your_target:
+                        for n in your_target:
+                            try:
+                                your_target_result[str(n)] = n.meta['description']
+                            except:
+                                your_target_result[str(n)] = None
+                    yara_result = {
+                        "your_target": your_target_result
+                    }
+                    file_report.yara(yara_result)
+                    file_report.write()
+
             if args.document:
                 malicious_document = is_malicious_document(filename=args.filename)
                 print(
@@ -512,8 +559,34 @@ if __name__ == '__main__':
                             exit()
                     print()
 
+                your_target = {}
+                if args.yara:
+                    yara = str(os.path.realpath(args.yara))
+                    your_target = is_your_target(args.filename, yara)
+                    if your_target:
+                        print(
+                            colors.BOLD + colors.YELLOW + "These Yara Rules are created by yourself and aimed to detecte something you need.\nResult: " + colors.RESET)
+                        for n in your_target:
+                            try:
+                                print("\t {} - {}".format(n, n.meta['description']))
+                            except:
+                                print('\t', n)
+                        print()
+                        print("================================================================================")
+                        if args.Flush == "off":
+                            if input("Continue? [Y/n] ") is 'n':
+                                exit()
+                        print()
 
                 if args.report:
+                    your_target_result = {}
+                    if your_target:
+                        for n in your_target:
+                            try:
+                                your_target_result[str(n)] = n.meta['description']
+                            except:
+                                your_target_result[str(n)] = None
+
                     malicious_document_result = {}
                     if malicious_document:
                         for n in malicious_document:
@@ -522,7 +595,8 @@ if __name__ == '__main__':
                             except:
                                 malicious_document_result[str(n)] = None
                     yara_result = {
-                        "malicious_document": malicious_document_result
+                        "malicious_document": malicious_document_result,
+                        "your_target": your_target_result
                     }
                     file_report.yara(yara_result)
                     file_report.write()
