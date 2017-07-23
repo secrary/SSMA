@@ -18,7 +18,7 @@ from src.check_virustotal import virustotal
 from src.file_strings import get_strings
 from src.pe_report import pe_report, elf_report, others_report
 
-
+#TODO
 def start_scan(args):
     dir = os.path.abspath(args.directory)
     list = os.listdir(dir)

@@ -5,6 +5,7 @@ Added by Yang
 
 import os
 import json
+from src.check_strings import ascii_strings, unicode_strings
 
 
 class pe_report:
@@ -16,6 +17,8 @@ class pe_report:
         self.check_date = pe.check_date()
         self.sections_analysis = pe.sections_analysis(report)
         self.check_file_header = pe.check_file_header(report)
+        self.ascii_strings = ascii_strings(self.filename)
+        self.unicode_strings = unicode_strings(self.filename)
 
     def domains(self, domains):
         self.domains = domains
@@ -33,7 +36,9 @@ class pe_report:
             "date": self.check_date,
             "imports": self.check_imports,
             "yara_results": self.yara,
-            "malware_domains": self.domains
+            "malware_domains": self.domains,
+            "ascii_strings": self.ascii_strings,
+            "unicode_strings": self.unicode_strings
         }
 
         with open("analysis_report/" + os.path.basename(self.filename) + ".json", "w") as f:
@@ -41,8 +46,16 @@ class pe_report:
 
 
 class elf_report:
-    def __init__(self, elf):
+    def __init__(self, elf, report):
         self.filename = elf.filename
+        self.file_info = elf.file_info(report)
+        self.dependencies = elf.dependencies().read().decode('utf-8')
+        self.elf_header = elf.elf_header().read().decode('utf-8')
+        self.program_header = elf.program_header().read().decode('utf-8')
+        self.section_header = elf.section_header().read().decode('utf-8')
+        self.symbols = elf.symbols().read().decode('utf-8')
+        self.ascii_strings = ascii_strings(self.filename)
+        self.unicode_strings = unicode_strings(self.filename)
 
     def domains(self, domains):
         self.domains = domains
@@ -52,8 +65,17 @@ class elf_report:
 
     def write(self):
         obj = {
+            "filename": os.path.basename(self.filename),
+            "file_info": self.file_info,
+            "dependencies": self.dependencies,
+            "elf_header": self.elf_header,
+            "program_header": self.program_header,
+            "section_header": self.section_header,
+            "symbols": self.symbols,
             "yara_results": self.yara,
-            "malware_domains": self.domains
+            "malware_domains": self.domains,
+            "ascii_strings": self.ascii_strings,
+            "unicode_strings": self.unicode_strings
         }
 
         with open("analysis_report/" + os.path.basename(self.filename) + ".json", "w") as f:
@@ -65,6 +87,8 @@ class others_report:
     def __init__(self, other):
         self.filename = os.path.basename(other[0])
         self.file_info = other
+        self.ascii_strings = ascii_strings(self.filename)
+        self.unicode_strings = unicode_strings(self.filename)
 
     def domains(self, domains):
         self.domains = domains
@@ -77,7 +101,9 @@ class others_report:
             "filename": self.filename,
             "file_info": self.file_info,
             "yara_results": self.yara,
-            "malware_domains": self.domains
+            "malware_domains": self.domains,
+            "ascii_strings": self.ascii_strings,
+            "unicode_strings": self.unicode_strings
         }
 
         with open("analysis_report/" + os.path.basename(self.filename) + ".json", "w") as f:

@@ -210,16 +210,83 @@ if __name__ == '__main__':
 
     # ELF file -> Linux malware
     # Added by Yang
-    # TODO
     elif filetype == 'application/x-executable':
         elf = ELFScanner(filename=args.filename)
-        print(colors.BOLD + colors.YELLOW + "File Details: " + colors.RESET)
+
+        if args.report == "output":
+            print('{\"results\": {\n\t\"File Details\": {')
+        else:
+            print(colors.BOLD + colors.YELLOW + "File Details: " + colors.RESET)
+        for n in elf.file_info(args.report):
+            if args.report == "output":
+                print('\t',n)
+            else:
+                print('\t',n)
+        if args.report == "output":
+            print("\t},")
+        else:
+            print()
+            print("================================================================================")
+            if args.Flush == "off":
+                if input("Continue? [Y/n] ") is 'n':
+                    exit()
+            print()
+
+        depends = elf.dependencies()
+        if depends:
+            print(colors.BOLD + colors.YELLOW + "Dependencies: " + colors.RESET)
+            for line in depends:
+                line = line.decode('utf-8', 'ignore').replace("\n", "")
+                print(line)
+            print()
+            print("================================================================================")
+            if args.Flush == "off":
+                if input("Continue? [Y/n] ") is 'n':
+                    exit()
+            print()
+
+        prog_header = elf.program_header()
+        if prog_header:
+            print(colors.BOLD + colors.YELLOW + "Program Header Information: " + colors.RESET)
+            for line in prog_header:
+                line = line.decode('utf-8', 'ignore').replace("\n", "")
+                print(line)
+            print()
+            print("================================================================================")
+            if args.Flush == "off":
+                if input("Continue? [Y/n] ") is 'n':
+                    exit()
+            print()
+
+        sect_header = elf.section_header()
+        if sect_header:
+            print(colors.BOLD + colors.YELLOW + "Section Header Information: " + colors.RESET)
+            for line in sect_header:
+                line = line.decode('utf-8', 'ignore').replace("\n", "")
+                print(line)
+            print()
+            print("================================================================================")
+            if args.Flush == "off":
+                if input("Continue? [Y/n] ") is 'n':
+                    exit()
+            print()
+
+        syms = elf.symbols()
+        print(colors.BOLD + colors.YELLOW + "Symbol Information: " + colors.RESET)
+        for line in syms:
+            line = line.decode('utf-8', 'ignore').replace("\n", "")
+            print(line)
+        print()
+        print("================================================================================")
+        if args.Flush == "off":
+            if input("Continue? [Y/n] ") is 'n':
+                exit()
+        print()
 
         if args.report:
             if not os.path.exists("analysis_report"):
                 os.mkdir("analysis_report")
-            file_report = elf_report(elf)
-        pass
+            file_report = elf_report(elf, args.report)
 
     else:
         print(colors.BOLD + colors.YELLOW + "File Details: " + colors.RESET)
