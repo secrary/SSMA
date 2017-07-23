@@ -3,8 +3,11 @@
 [![Join the chat at https://gitter.im/simple_static_malware_analyzer/Lobby](https://badges.gitter.im/simple_static_malware_analyzer/Lobby.svg)](https://gitter.im/simple_static_malware_analyzer/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)   [![Build Status](https://travis-ci.org/secrary/SSMA.svg?branch=master)](https://travis-ci.org/secrary/SSMA)
 
 SSMA is a simple malware analyzer written in Python 3. 
+
 ## Features:
 * Analyze PE file's header and sections (number of sections, entropy of sections/PE file, suspicious section names, suspicious flags in the characteristics of the PE file, etc.)
+
+* Analyze ELF file for Linux malware analysis, it uses various open source tools (ldd, readelf, strings) to display ELF header structure, ASCII/UNICODE strings, shared objects, section header, symbol table, etc.
 
 * Searches for possible domains, e-mail addresses, IP addresses in the strings of the file.
 
@@ -24,6 +27,9 @@ SSMA is a simple malware analyzer written in Python 3.
 
 * Find if documents have been crafted to leverage malicious code.
 
+* Generate json format report.
+
+* Mass analysis by specifying a folder.
 
 ## Usage
 ```
@@ -35,6 +41,7 @@ sudo pip3 install -r requirements.txt
 
 python3 ssma.py -h
 ```
+
 ## Using virtualenv
 ```
 git clone https://github.com/secrary/SSMA
