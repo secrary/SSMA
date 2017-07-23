@@ -36,6 +36,15 @@ if __name__ == '__main__':
     parser.add_argument("-r", "--report", help="Generate json format report (yes/no/output)")
 
     args = parser.parse_args()
+
+    # Added by Yang
+    if args.directory and not args.filename:
+        start_scan(args)
+        exit()
+    elif args.directory and args.filename:
+        print(colors.BOLD + colors.RED + "option error, please select a file or directory, run ssma.py -h")
+        exit()
+
     if args.report == "output":
         pass
     else:
@@ -73,14 +82,6 @@ if __name__ == '__main__':
             exit()
 
     internet_connection = check_internet_connection()
-
-    # Added by Yang
-    if args.directory and not args.filename:
-        start_scan(args)
-        exit()
-    elif args.directory and args.filename:
-        print(colors.BOLD + colors.RED + "option error, please select a file or directory, run ssma.py -h")
-        exit()
 
     py_file_location = os.path.dirname(__file__)
     args.filename = os.path.realpath(args.filename)
