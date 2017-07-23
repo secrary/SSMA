@@ -1,5 +1,6 @@
 import re
 from urllib.parse import urlparse
+import subprocess
 
 
 def is_ip(list_of_strings):
@@ -33,3 +34,15 @@ def is_email(list_of_strings):
     f = filter(email_pattern.match, list_of_strings)
 
     return list(f)
+
+
+def ascii_strings(filename):
+    output = subprocess.check_output(["strings", "-a", filename])
+    strings_list = list(output.decode("utf-8").split('\n'))
+    return strings_list
+
+
+def unicode_strings(filename):
+    output = subprocess.check_output(["strings", "-a", "-el", filename])
+    strings_list = list(output.decode("utf-8").split('\n'))
+    return strings_list

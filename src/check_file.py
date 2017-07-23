@@ -7,7 +7,8 @@ import array
 import magic
 import math
 import pefile
-import elftools
+from subprocess import Popen, PIPE, STDOUT
+from elftools.elf.elffile import ELFFile
 
 ssdeep_r = True
 try:
@@ -358,11 +359,83 @@ class PEScanner:
             "flags": flags
         }
 
+
 # Added by Yang
-# TODO
 class ELFScanner:
     def __init__(self, filename):
         self.filename = filename
+        with open(self.filename, 'rb') as f:
+            self.elffile = ELFFile(f)
+
+    def get_ssdeep(self):
+        try:
+            return ssdeep.hash_from_file(self.filename)
+        except ImportError:
+            pass
+        return ''
+
+    def file_info(self, report):
+        info = []
+        with open(self.filename, 'rb') as f:
+            file = f.read()
+            if report == "output":
+                info.append("\"File\": \"{}\",".format(self.filename.split("/")[len(self.filename.split("/"))-1]))
+                info.append("\"Size\": \"{} bytes\",".format(os.path.getsize(self.filename)))
+                info.append("\"Type\": \"{}\",".format(magic.from_file(self.filename, mime=True)))
+                info.append("\"MD5\":  \"{}\",".format(hashlib.md5(file).hexdigest()))
+                info.append("\"SHA1\": \"{}\",".format(hashlib.sha1(file).hexdigest()))
+                if ssdeep_r:
+                    info.append("\"ssdeep\": \"{}\",".format(self.get_ssdeep()))
+                return info
+            else:
+                info.append("File: {}".format(self.filename))
+                info.append("Size: {} bytes".format(os.path.getsize(self.filename)))
+                info.append("Type: {}".format(magic.from_file(self.filename, mime=True)))
+                info.append("MD5: {}".format(hashlib.md5(file).hexdigest()))
+                info.append("SHA1: {}".format(hashlib.sha1(file).hexdigest()))
+                if ssdeep_r:
+                    info.append("ssdeep: {}".format(self.get_ssdeep()))
+        return info
+
+    def dependencies(self):
+        try:
+            output = Popen(['ldd', self.filename],
+                           stdout=PIPE, stdin=PIPE, stderr=STDOUT, bufsize=1)
+            return output.stdout
+        except:
+            pass
+
+    def elf_header(self):
+        try:
+            output = Popen(['readelf', '-h', self.filename],
+                           stdout=PIPE, stdin=PIPE, stderr=STDOUT, bufsize=1)
+            return output.stdout
+        except:
+            pass
+
+    def program_header(self):
+        try:
+            output = Popen(['readelf', '-l', self.filename],
+                           stdout=PIPE, stdin=PIPE, stderr=STDOUT, bufsize=1)
+            return output.stdout
+        except:
+            pass
+
+    def section_header(self):
+        try:
+            output = Popen(['readelf', '-S', self.filename],
+                           stdout=PIPE, stdin=PIPE, stderr=STDOUT, bufsize=1)
+            return output.stdout
+        except:
+            pass
+
+    def symbols(self):
+        try:
+            output = Popen(['readelf', '-s', self.filename],
+                           stdout=PIPE, stdin=PIPE, stderr=STDOUT, bufsize=1)
+            return output.stdout
+        except:
+            pass
 
 
 def file_info(filename):
