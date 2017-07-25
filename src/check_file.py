@@ -269,7 +269,7 @@ class PEScanner:
         section_names = []
         sections = {}
         for section in self.pe.sections:
-            sec_name = section.Name.decode(errors='ignore').strip()
+            sec_name = section.Name.strip(b"\x00").decode(errors='ignore').strip()
             section_names.append(sec_name)
             entropy = section.get_entropy()
             for_section = False
