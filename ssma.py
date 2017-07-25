@@ -20,7 +20,7 @@ from src.check_updates import check_internet_connection, download_yara_rules_git
 from src.check_virustotal import virustotal
 from src.file_strings import get_strings
 from src.mass_analysis import start_scan
-from src.pe_report import pe_report, elf_report, others_report
+from src.report import pe_report, elf_report, others_report
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Simple Static Malware Analyzer")
@@ -92,7 +92,7 @@ if __name__ == '__main__':
             print('{\"results\": {\n\t\"File Details\": {')
         else:
             print(colors.BOLD + colors.YELLOW + "File Details: " + colors.RESET)
-        for n in pe.file_info(args.report):
+        for n in pe.file_info(args.report, False):
             if args.report == "output":
                 print('\t', n)
             else:
@@ -338,45 +338,64 @@ if __name__ == '__main__':
 
     strings = get_strings(filename=args.filename).get_result()
     if strings[0]:
-        if args.report == "output":
-            print("\t\"Domains\": {")
-            total = 0
-            mal_domains = ransomware_and_malware_domain_check(list(strings[0]))
-            for n in mal_domains[0]:
-                print("\t\t\"" + str(n) + "\": \"True\",")
-                total += 1
-            if mal_domains[1]:
-                for n in mal_domains[1]:
+        if internet_connection:
+            if args.report == "output":
+                print("\t\"Domains\": {")
+                total = 0
+                mal_domains = ransomware_and_malware_domain_check(list(strings[0]))
+                for n in mal_domains[0]:
                     print("\t\t\"" + str(n) + "\": \"True\",")
                     total += 1
-            if mal_domains[2]:
-                for n in mal_domains[2]:
-                    print("\t\t\"" + str(n) + "\": \"True\",")
-                    total += 1
-            print("\t\t\"Total\": " + str(total))
+                if mal_domains[1]:
+                    for n in mal_domains[1]:
+                        print("\t\t\"" + str(n) + "\": \"True\",")
+                        total += 1
+                if mal_domains[2]:
+                    for n in mal_domains[2]:
+                        print("\t\t\"" + str(n) + "\": \"True\",")
+                        total += 1
+                print("\t\t\"Total\": " + str(total))
+            else:
+                print(colors.BOLD + colors.YELLOW + "Possible domains in strings of the file: " + colors.RESET)
+                mal_domains = ransomware_and_malware_domain_check(list(strings[0]))
+                for n in mal_domains[0]:
+                    print('\t', n)
+                print()
+                if mal_domains[1]:
+                    print("\t" + colors.RED + "Abuse.ch's Ransomware Domain Blocklist: " + colors.RESET)
+                    for n in mal_domains[1]:
+                        print('\t', n)
+                    print()
+                if mal_domains[2]:
+                    print(
+                        "\t" + colors.RED + "A list of domains that are known to be used to propagate malware by http://www.malwaredomains.com/" + colors.RESET)
+                    for n in mal_domains[2]:
+                        print('\t', n)
+                    print()
+                print()
+                print("================================================================================")
+                if args.Flush == "off":
+                    if input("Continue? [Y/n] ") is 'n':
+                        exit()
+                print()
         else:
-            print(colors.BOLD + colors.YELLOW + "Possible domains in strings of the file: " + colors.RESET)
-            mal_domains = ransomware_and_malware_domain_check(list(strings[0]))
-            for n in mal_domains[0]:
-                print('\t', n)
-            print()
-            if mal_domains[1]:
-                print("\t" + colors.RED + "Abuse.ch's Ransomware Domain Blocklist: " + colors.RESET)
-                for n in mal_domains[1]:
+            if args.report == "output":
+                print("\t\"Domains\": {")
+                total = 0
+                for n in strings[0]:
+                    print("\t\t\"" + str(n) + "\": \"True\",")
+                    total += 1
+                print("\t\t\"Total\": " + str(total))
+            else:
+                print(colors.BOLD + colors.YELLOW + "Possible Domains addresses in strings of the file:" + colors.RESET)
+                for n in strings[0]:
                     print('\t', n)
                 print()
-            if mal_domains[2]:
-                print(
-                    "\t" + colors.RED + "A list of domains that are known to be used to propagate malware by http://www.malwaredomains.com/" + colors.RESET)
-                for n in mal_domains[2]:
-                    print('\t', n)
+                print("================================================================================")
+                if args.Flush == "off":
+                    if input("Continue? [Y/n] ") is 'n':
+                        exit()
                 print()
-            print()
-            print("================================================================================")
-            if args.Flush == "off":
-                if input("Continue? [Y/n] ") is 'n':
-                    exit()
-            print()
 
     if strings[1]:
         if args.report == "output":
@@ -418,11 +437,14 @@ if __name__ == '__main__':
             print()
 
     if args.report:
-        mal_domains = ransomware_and_malware_domain_check(list(strings[0]))
-        domains = {
-            "normal_domains": list(mal_domains[0]),
-            "malware_domains": list(mal_domains[1]) + list(mal_domains[2])
-        }
+        if internet_connection:
+            mal_domains = ransomware_and_malware_domain_check(list(strings[0]))
+            domains = {
+                "normal_domains": list(mal_domains[0]),
+                "malware_domains": list(mal_domains[1]) + list(mal_domains[2])
+            }
+        else:
+            domains = list(strings[0])
         strings_result = {
             "Domains": domains,
             "IP-addresses": strings[1],
