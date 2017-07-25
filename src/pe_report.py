@@ -44,6 +44,21 @@ class pe_report:
         with open("analysis_report/" + os.path.basename(self.filename) + ".json", "w") as f:
             json.dump(obj, f, indent=4)
 
+    def dump(self):
+        obj = {
+            "filename": os.path.basename(self.filename),
+            "file_info": self.file_info,
+            "TSL": self._tsl,
+            "sections": self.sections_analysis,
+            "file_header": self.check_file_header,
+            "date": self.check_date,
+            "imports": self.check_imports,
+            "yara_results": self.yara,
+            "malware_domains": self.domains,
+            "ascii_strings": self.ascii_strings,
+            "unicode_strings": self.unicode_strings
+        }
+        return json.dumps(obj, indent=4, sort_keys=False)
 
 class elf_report:
     def __init__(self, elf, report):
@@ -81,6 +96,22 @@ class elf_report:
         with open("analysis_report/" + os.path.basename(self.filename) + ".json", "w") as f:
             json.dump(obj, f, indent=4)
 
+    def dump(self):
+        obj = {
+            "filename": os.path.basename(self.filename),
+            "file_info": self.file_info,
+            "dependencies": self.dependencies,
+            "elf_header": self.elf_header,
+            "program_header": self.program_header,
+            "section_header": self.section_header,
+            "symbols": self.symbols,
+            "yara_results": self.yara,
+            "malware_domains": self.domains,
+            "ascii_strings": self.ascii_strings,
+            "unicode_strings": self.unicode_strings
+        }
+
+        return json.dumps(obj, indent=4, sort_keys=False)
 
 class others_report:
     def __init__(self, other):
@@ -107,3 +138,15 @@ class others_report:
 
         with open("analysis_report/" + os.path.basename(self.filename) + ".json", "w") as f:
             json.dump(obj, f, indent=4)
+
+    def dump(self):
+        obj = {
+            "filename": self.filename,
+            "file_info": self.file_info,
+            "yara_results": self.yara,
+            "malware_domains": self.domains,
+            "ascii_strings": self.ascii_strings,
+            "unicode_strings": self.unicode_strings
+        }
+
+        return json.dumps(obj, indent=4, sort_keys=False)

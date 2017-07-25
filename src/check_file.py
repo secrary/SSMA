@@ -197,16 +197,7 @@ class PEScanner:
         with open(self.filename, 'rb') as f:
             file = f.read()
             if report == "output":
-                info.append("\"File\": \"{}\",".format(self.filename.split("/")[len(self.filename.split("/")) - 1]))
-                info.append("\"Size\": \"{} bytes\",".format(os.path.getsize(self.filename)))
-                info.append("\"Type\": \"{}\",".format(magic.from_file(self.filename, mime=True)))
-                info.append("\"MD5\":  \"{}\",".format(hashlib.md5(file).hexdigest()))
-                info.append("\"SHA1\": \"{}\",".format(hashlib.sha1(file).hexdigest()))
-                if ssdeep_r:
-                    info.append("\"ssdeep\": \"{}\",".format(self.get_ssdeep()))
-                info.append("\"Date\": \"{}\",".format(time.ctime(self.pe.FILE_HEADER.TimeDateStamp)))
-                info.append("\"PE file entropy\": {}".format(str(self.pe_entropy)))
-                return info
+                return ""
             else:
                 info.append("File: {}".format(self.filename))
                 info.append("Size: {} bytes".format(os.path.getsize(self.filename)))
@@ -254,8 +245,7 @@ class PEScanner:
         good_sectoins = ['.data', '.text', '.code', '.reloc', '.idata', '.edata', '.rdata', '.bss', '.rsrc']
         number_of_section = self.pe.FILE_HEADER.NumberOfSections
         if report == "output":
-            print("\t\"sections\": {")
-            print("\t\t\"number\": " + str(number_of_section) + ",")
+            pass
         else:
             if number_of_section < 1 or number_of_section > 9:
                 print(colors.RED + "[SUSPICIOUS NUMBER OF SECTIONS] - {}".format(number_of_section) + colors.RESET)
