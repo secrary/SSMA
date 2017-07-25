@@ -181,12 +181,15 @@ class PEScanner:
             pass
         return ''
 
-    def check_date(self):
+    def check_date(self, is_report):
         val = self.pe.FILE_HEADER.TimeDateStamp
         pe_year = int(time.ctime(val).split()[-1])
         this_year = int(time.gmtime(time.time())[0])
         if pe_year > this_year or pe_year < 2000:
-            return colors.RED + " [SUSPICIOUS COMPILATION DATE] - {}".format(pe_year) + colors.RESET
+            if is_report:
+                return "[SUSPICIOUS COMPILATION DATE] - {}".format(pe_year)
+            else:
+                return colors.RED + " [SUSPICIOUS COMPILATION DATE] - {}".format(pe_year) + colors.RESET
 
     def file_info(self, report):
         info = []
@@ -194,7 +197,7 @@ class PEScanner:
         with open(self.filename, 'rb') as f:
             file = f.read()
             if report == "output":
-                info.append("\"File\": \"{}\",".format(self.filename.split("/")[len(self.filename.split("/"))-1]))
+                info.append("\"File\": \"{}\",".format(self.filename.split("/")[len(self.filename.split("/")) - 1]))
                 info.append("\"Size\": \"{} bytes\",".format(os.path.getsize(self.filename)))
                 info.append("\"Type\": \"{}\",".format(magic.from_file(self.filename, mime=True)))
                 info.append("\"MD5\":  \"{}\",".format(hashlib.md5(file).hexdigest()))
@@ -214,7 +217,8 @@ class PEScanner:
                     info.append("ssdeep: {}".format(self.get_ssdeep()))
                 info.append("Date: {}".format(time.ctime(self.pe.FILE_HEADER.TimeDateStamp)))
                 info.append("PE file entropy: {}".format(
-                    self.pe_entropy if not low_high_entropy else colors.LIGHT_RED + str(self.pe_entropy) + colors.RESET))
+                    self.pe_entropy if not low_high_entropy else colors.LIGHT_RED + str(
+                        self.pe_entropy) + colors.RESET))
             if low_high_entropy and not report == "output":
                 info.append(
                     colors.RED + "Very high or very low entropy means that file is compressed or encrypted since truly random data is not common." + colors.RESET)
@@ -250,13 +254,13 @@ class PEScanner:
         good_sectoins = ['.data', '.text', '.code', '.reloc', '.idata', '.edata', '.rdata', '.bss', '.rsrc']
         number_of_section = self.pe.FILE_HEADER.NumberOfSections
         if report == "output":
-                print("\t\"sections\": {")
-                print("\t\t\"number\": "+str(number_of_section)+",")
+            print("\t\"sections\": {")
+            print("\t\t\"number\": " + str(number_of_section) + ",")
         else:
             if number_of_section < 1 or number_of_section > 9:
                 print(colors.RED + "[SUSPICIOUS NUMBER OF SECTIONS] - {}".format(number_of_section) + colors.RESET)
             else:
-                print("Number of Sections: "+str(number_of_section))
+                print("Number of Sections: " + str(number_of_section))
             print()
             print("{} {} {} {} {}".format(*"Section VirtualAddress VirtualSize SizeofRawData Entropy".split()))
         h_l_entropy = False
@@ -265,7 +269,7 @@ class PEScanner:
         section_names = []
         sections = {}
         for section in self.pe.sections:
-            sec_name = section.Name.decode(errors='ignore').strip()
+            sec_name = section.Name.strip(b"\x00").decode(errors='ignore').strip()
             section_names.append(sec_name)
             entropy = section.get_entropy()
             for_section = False
@@ -280,15 +284,15 @@ class PEScanner:
                     suspicious_size_of_raw_data = True
                     virtual_size.append((section.Name.decode(errors='ignore').strip(), section.Misc_VirtualSize))
             if report == "output":
-                pass #TODO
+                pass  # TODO
             else:
                 print(
-                    "{:7} {:14} {:11} {:13} {:7}".format(section.Name.decode(errors='ignore').strip(),
-                                                     hex(section.VirtualAddress),
-                                                     section.Misc_VirtualSize,
-                                                     section.SizeOfRawData,
-                                                     entropy if not for_section else colors.LIGHT_RED + str(
-                                                         entropy) + colors.RESET))
+                    "{:7} {:14} {:11} {:13} {:7}".format(sec_name,
+                                                         hex(section.VirtualAddress),
+                                                         section.Misc_VirtualSize,
+                                                         section.SizeOfRawData,
+                                                         entropy if not for_section else colors.LIGHT_RED + str(
+                                                             entropy) + colors.RESET))
             section_info = {
                 "Section": sec_name,
                 "VirtualAddress": hex(section.VirtualAddress),
@@ -300,20 +304,21 @@ class PEScanner:
 
         suspicious = {}
         if report == "output":
-            pass #TODO
+            pass  # TODO
         else:
             print()
             if virtual_size:
                 for n, m in virtual_size:
                     print(colors.RED + 'SUSPICIOUS size of the section "{}" when stored in memory - {}'.format(n,
-                                                                                                           m) + colors.RESET)
+                                                                                                               m) + colors.RESET)
                 print()
                 suspicious["suspicious_size_of_the_section"] = virtual_size
             if h_l_entropy:
                 print(
                     colors.RED + "Very high or very low entropy means that file/section is compressed or encrypted since truly random data is not common." + colors.RESET)
                 print()
-                suspicious["h_l_entropy"] = "Very high or very low entropy means that file/section is compressed or encrypted since truly random data is not common."
+                suspicious[
+                    "h_l_entropy"] = "Very high or very low entropy means that file/section is compressed or encrypted since truly random data is not common."
             if suspicious_size_of_raw_data:
                 print(colors.RED + "Suspicious size of the raw data - 0\n" + colors.RESET)
                 suspicious["suspicious_size_of_raw_data"] = "yes"
@@ -344,7 +349,7 @@ class PEScanner:
             else:
                 print(
                     colors.LIGHT_RED + "File contains some debug information, in majority of regular PE files, should not "
-                                   "contain debug information" + colors.RESET + "\n")
+                                       "contain debug information" + colors.RESET + "\n")
 
         flags = [("BYTES_REVERSED_LO", self.pe.FILE_HEADER.IMAGE_FILE_BYTES_REVERSED_LO,
                   "Little endian: LSB precedes MSB in memory, deprecated and should be zero."),
@@ -379,7 +384,7 @@ class ELFScanner:
         with open(self.filename, 'rb') as f:
             file = f.read()
             if report == "output":
-                info.append("\"File\": \"{}\",".format(self.filename.split("/")[len(self.filename.split("/"))-1]))
+                info.append("\"File\": \"{}\",".format(self.filename.split("/")[len(self.filename.split("/")) - 1]))
                 info.append("\"Size\": \"{} bytes\",".format(os.path.getsize(self.filename)))
                 info.append("\"Type\": \"{}\",".format(magic.from_file(self.filename, mime=True)))
                 info.append("\"MD5\":  \"{}\",".format(hashlib.md5(file).hexdigest()))

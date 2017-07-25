@@ -9,9 +9,8 @@
 
 import argparse
 import os
-import magic
 import shutil
-import elftools
+import magic
 
 from src import colors
 from src.blacklisted_domain_ip import ransomware_and_malware_domain_check
@@ -22,7 +21,6 @@ from src.check_virustotal import virustotal
 from src.file_strings import get_strings
 from src.mass_analysis import start_scan
 from src.pe_report import pe_report, elf_report, others_report
-
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Simple Static Malware Analyzer")
@@ -78,7 +76,7 @@ if __name__ == '__main__':
         try:
             os.path.realpath(args.directory)
         except:
-            print(colors.BOLD + colors.RED + "No option selected, run ssma.py -h")
+            print(colors.BOLD + colors.RED + "No option selected, run ssma.py -h" + colors.RESET)
             exit()
 
     internet_connection = check_internet_connection()
@@ -96,9 +94,9 @@ if __name__ == '__main__':
             print(colors.BOLD + colors.YELLOW + "File Details: " + colors.RESET)
         for n in pe.file_info(args.report):
             if args.report == "output":
-                print('\t',n)
+                print('\t', n)
             else:
-                print('\t',n)
+                print('\t', n)
         if args.report == "output":
             print("\t},")
         else:
@@ -109,7 +107,13 @@ if __name__ == '__main__':
                     exit()
             print()
 
-        sections = pe.sections_analysis(args.report)
+        if args.report:
+            if not os.path.exists("analysis_report"):
+                os.mkdir("analysis_report")
+            file_report = pe_report(pe, args.report)
+        else:
+            sections = pe.sections_analysis(args.report)
+
         if args.report == "output":
             pass
         else:
@@ -122,7 +126,7 @@ if __name__ == '__main__':
         _tls = pe.checkTSL()
         if _tls is not None:
             if args.report == "output":
-                print("\t\t\".tls\": \"True\",\n\t},") # EDIT AFTER HANDLING SECTIONS
+                print("\t\t\".tls\": \"True\",\n\t},")  # EDIT AFTER HANDLING SECTIONS
             else:
                 print(colors.RED + "The executable contains a .tls section.\n" + colors.RESET + "A TLS callback can be used to execute code before the entry point \
                 and therefore execute secretly in a debugger.")
@@ -134,9 +138,9 @@ if __name__ == '__main__':
 
         check_file_header = pe.check_file_header(args.report)
         continue_message = False
-        if check_file_header["debug"] == True:
+        if check_file_header["debug"]:
             continue_message = True
-            print( # MAYBE A DUPLICATE WITH "check_file.py" #323 ?
+            print(  # MAYBE A DUPLICATE WITH "check_file.py" #323 ?
                 colors.LIGHT_RED + "File contains some debug information, in majority of regular PE files, should not "
                                    "contain debug information" + colors.RESET + "\n")
 
@@ -146,9 +150,9 @@ if __name__ == '__main__':
                 found = 0
                 for n in check_file_header["flags"]:
                     if n[1]:
-                        found+=1
-                        print("\t\"flags\": {\n\t\t\"flag\":"+' \"'+n[0]+'\",')
-                print("\t\t\"found\": "+str(found)+"\n\t},")
+                        found += 1
+                        print("\t\"flags\": {\n\t\t\"flag\":" + ' \"' + n[0] + '\",')
+                print("\t\t\"found\": " + str(found) + "\n\t},")
             else:
                 print(colors.LIGHT_RED + "Suspicious flags in the characteristics of the PE file: " + colors.RESET)
                 for n in check_file_header["flags"]:
@@ -165,10 +169,11 @@ if __name__ == '__main__':
                         exit()
             print()
 
-        check_date_result = pe.check_date()
+        check_date_result = pe.check_date(False)
         if check_date_result:
             if args.report == "output":
-                print("\t\"com-date\": {\n\t\t\"date\": "+str(check_date_result.split(" ")[len(check_date_result.split(" "))-1]))
+                print("\t\"com-date\": {\n\t\t\"date\": " + str(
+                    check_date_result.split(" ")[len(check_date_result.split(" ")) - 1]))
                 print("\t},")
             else:
                 print(check_date_result)
@@ -186,9 +191,9 @@ if __name__ == '__main__':
                 i = 0
                 for n in check_imports_result:
                     n = n.split("^")
-                    print("\t\t\""+n[0]+"\": \"True\",")
-                    i+=1
-                print("\t\t\"Total\": "+str(i)+"\n\t},")
+                    print("\t\t\"" + n[0] + "\": \"True\",")
+                    i += 1
+                print("\t\t\"Total\": " + str(i) + "\n\t},")
         else:
             if check_imports_result:
                 print(
@@ -204,11 +209,6 @@ if __name__ == '__main__':
                         exit()
                 print()
 
-        if args.report:
-            if not os.path.exists("analysis_report"):
-                os.mkdir("analysis_report")
-            file_report = pe_report(pe, args.report)
-
     # ELF file -> Linux malware
     # Added by Yang
     elif filetype == 'application/x-executable':
@@ -220,9 +220,9 @@ if __name__ == '__main__':
             print(colors.BOLD + colors.YELLOW + "File Details: " + colors.RESET)
         for n in elf.file_info(args.report):
             if args.report == "output":
-                print('\t',n)
+                print('\t', n)
             else:
-                print('\t',n)
+                print('\t', n)
         if args.report == "output":
             print("\t},")
         else:
@@ -343,17 +343,17 @@ if __name__ == '__main__':
             total = 0
             mal_domains = ransomware_and_malware_domain_check(list(strings[0]))
             for n in mal_domains[0]:
-                print("\t\t\""+str(n)+"\": \"True\",")
-                total+=1
+                print("\t\t\"" + str(n) + "\": \"True\",")
+                total += 1
             if mal_domains[1]:
                 for n in mal_domains[1]:
-                    print("\t\t\""+str(n)+"\": \"True\",")
-                    total+=1
+                    print("\t\t\"" + str(n) + "\": \"True\",")
+                    total += 1
             if mal_domains[2]:
                 for n in mal_domains[2]:
-                    print("\t\t\""+str(n)+"\": \"True\",")
-                    total+=1
-            print("\t\t\"Total\": "+str(total))
+                    print("\t\t\"" + str(n) + "\": \"True\",")
+                    total += 1
+            print("\t\t\"Total\": " + str(total))
         else:
             print(colors.BOLD + colors.YELLOW + "Possible domains in strings of the file: " + colors.RESET)
             mal_domains = ransomware_and_malware_domain_check(list(strings[0]))
@@ -383,9 +383,9 @@ if __name__ == '__main__':
             print("\t\"IP-addresses\": {")
             total = 0
             for n in strings[1]:
-                print("\t\t\""+str(n)+"\": \"True\",")
-                total+=1
-            print("\t\t\"Total\": "+str(total))
+                print("\t\t\"" + str(n) + "\": \"True\",")
+                total += 1
+            print("\t\t\"Total\": " + str(total))
         else:
             print(colors.BOLD + colors.YELLOW + "Possible IP addresses in strings of the file: " + colors.RESET)
             for n in strings[1]:
@@ -402,9 +402,9 @@ if __name__ == '__main__':
             print("\t\"Email\": {")
             total = 0
             for n in strings[2]:
-                print("\t\t\""+str(n)+"\": \"True\",")
-                total+=1
-            print("\t\t\"Total\": "+str(total))
+                print("\t\t\"" + str(n) + "\": \"True\",")
+                total += 1
+            print("\t\t\"Total\": " + str(total))
             print("\t}")
         else:
             print(colors.BOLD + colors.YELLOW + "Possible E-Mail addresses in strings of the file:" + colors.RESET)

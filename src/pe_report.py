@@ -14,7 +14,7 @@ class pe_report:
         self.file_info = pe.file_info(report)
         self._tsl = pe.checkTSL()
         self.check_imports = pe.check_imports()
-        self.check_date = pe.check_date()
+        self.check_date = pe.check_date(True)
         self.sections_analysis = pe.sections_analysis(report)
         self.check_file_header = pe.check_file_header(report)
         self.ascii_strings = ascii_strings(self.filename)
@@ -80,7 +80,6 @@ class elf_report:
 
         with open("analysis_report/" + os.path.basename(self.filename) + ".json", "w") as f:
             json.dump(obj, f, indent=4)
-
 
 
 class others_report:
