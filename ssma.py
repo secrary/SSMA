@@ -109,7 +109,13 @@ if __name__ == '__main__':
                     exit()
             print()
 
-        sections = pe.sections_analysis(args.report)
+        if args.report:
+            if not os.path.exists("analysis_report"):
+                os.mkdir("analysis_report")
+            file_report = pe_report(pe, args.report)
+        else:
+            sections = pe.sections_analysis(args.report)
+            
         if args.report == "output":
             pass
         else:
@@ -203,11 +209,6 @@ if __name__ == '__main__':
                     if input("Continue? [Y/n] ") is 'n':
                         exit()
                 print()
-
-        if args.report:
-            if not os.path.exists("analysis_report"):
-                os.mkdir("analysis_report")
-            file_report = pe_report(pe, args.report)
 
     # ELF file -> Linux malware
     # Added by Yang
