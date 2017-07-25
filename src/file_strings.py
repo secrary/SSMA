@@ -22,4 +22,3 @@ class get_strings:
 
     def get_result(self) -> tuple:
         return self.result
-

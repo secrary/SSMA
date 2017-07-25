@@ -92,7 +92,7 @@ if __name__ == '__main__':
             print('{\"results\": {\n\t\"File Details\": {')
         else:
             print(colors.BOLD + colors.YELLOW + "File Details: " + colors.RESET)
-        for n in pe.file_info(args.report):
+        for n in pe.file_info(args.report, False):
             if args.report == "output":
                 print('\t', n)
             else:
@@ -338,45 +338,64 @@ if __name__ == '__main__':
 
     strings = get_strings(filename=args.filename).get_result()
     if strings[0]:
-        if args.report == "output":
-            print("\t\"Domains\": {")
-            total = 0
-            mal_domains = ransomware_and_malware_domain_check(list(strings[0]))
-            for n in mal_domains[0]:
-                print("\t\t\"" + str(n) + "\": \"True\",")
-                total += 1
-            if mal_domains[1]:
-                for n in mal_domains[1]:
+        if internet_connection:
+            if args.report == "output":
+                print("\t\"Domains\": {")
+                total = 0
+                mal_domains = ransomware_and_malware_domain_check(list(strings[0]))
+                for n in mal_domains[0]:
                     print("\t\t\"" + str(n) + "\": \"True\",")
                     total += 1
-            if mal_domains[2]:
-                for n in mal_domains[2]:
-                    print("\t\t\"" + str(n) + "\": \"True\",")
-                    total += 1
-            print("\t\t\"Total\": " + str(total))
+                if mal_domains[1]:
+                    for n in mal_domains[1]:
+                        print("\t\t\"" + str(n) + "\": \"True\",")
+                        total += 1
+                if mal_domains[2]:
+                    for n in mal_domains[2]:
+                        print("\t\t\"" + str(n) + "\": \"True\",")
+                        total += 1
+                print("\t\t\"Total\": " + str(total))
+            else:
+                print(colors.BOLD + colors.YELLOW + "Possible domains in strings of the file: " + colors.RESET)
+                mal_domains = ransomware_and_malware_domain_check(list(strings[0]))
+                for n in mal_domains[0]:
+                    print('\t', n)
+                print()
+                if mal_domains[1]:
+                    print("\t" + colors.RED + "Abuse.ch's Ransomware Domain Blocklist: " + colors.RESET)
+                    for n in mal_domains[1]:
+                        print('\t', n)
+                    print()
+                if mal_domains[2]:
+                    print(
+                        "\t" + colors.RED + "A list of domains that are known to be used to propagate malware by http://www.malwaredomains.com/" + colors.RESET)
+                    for n in mal_domains[2]:
+                        print('\t', n)
+                    print()
+                print()
+                print("================================================================================")
+                if args.Flush == "off":
+                    if input("Continue? [Y/n] ") is 'n':
+                        exit()
+                print()
         else:
-            print(colors.BOLD + colors.YELLOW + "Possible domains in strings of the file: " + colors.RESET)
-            mal_domains = ransomware_and_malware_domain_check(list(strings[0]))
-            for n in mal_domains[0]:
-                print('\t', n)
-            print()
-            if mal_domains[1]:
-                print("\t" + colors.RED + "Abuse.ch's Ransomware Domain Blocklist: " + colors.RESET)
-                for n in mal_domains[1]:
+            if args.report == "output":
+                print("\t\"Domains\": {")
+                total = 0
+                for n in strings[0]:
+                    print("\t\t\"" + str(n) + "\": \"True\",")
+                    total += 1
+                print("\t\t\"Total\": " + str(total))
+            else:
+                print(colors.BOLD + colors.YELLOW + "Possible Domains addresses in strings of the file:" + colors.RESET)
+                for n in strings[0]:
                     print('\t', n)
                 print()
-            if mal_domains[2]:
-                print(
-                    "\t" + colors.RED + "A list of domains that are known to be used to propagate malware by http://www.malwaredomains.com/" + colors.RESET)
-                for n in mal_domains[2]:
-                    print('\t', n)
+                print("================================================================================")
+                if args.Flush == "off":
+                    if input("Continue? [Y/n] ") is 'n':
+                        exit()
                 print()
-            print()
-            print("================================================================================")
-            if args.Flush == "off":
-                if input("Continue? [Y/n] ") is 'n':
-                    exit()
-            print()
 
     if strings[1]:
         if args.report == "output":

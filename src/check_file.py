@@ -191,7 +191,7 @@ class PEScanner:
             else:
                 return colors.RED + " [SUSPICIOUS COMPILATION DATE] - {}".format(pe_year) + colors.RESET
 
-    def file_info(self, report):
+    def file_info(self, report, is_report):
         info = []
         low_high_entropy = self.pe_entropy < 1 or self.pe_entropy > 7
         with open(self.filename, 'rb') as f:
@@ -216,11 +216,19 @@ class PEScanner:
                 if ssdeep_r:
                     info.append("ssdeep: {}".format(self.get_ssdeep()))
                 info.append("Date: {}".format(time.ctime(self.pe.FILE_HEADER.TimeDateStamp)))
-                info.append("PE file entropy: {}".format(
-                    self.pe_entropy if not low_high_entropy else colors.LIGHT_RED + str(
-                        self.pe_entropy) + colors.RESET))
+                if is_report:
+                    info.append("PE file entropy: {}".format(
+                        self.pe_entropy
+                    ))
+                else:
+                    info.append("PE file entropy: {}".format(
+                        self.pe_entropy if not low_high_entropy else colors.LIGHT_RED + str(
+                            self.pe_entropy) + colors.RESET))
             if low_high_entropy and not report == "output":
-                info.append(
+                if is_report:
+                    info.append("Very high or very low entropy means that file is compressed or encrypted since truly random data is not common.")
+                else:
+                    info.append(
                     colors.RED + "Very high or very low entropy means that file is compressed or encrypted since truly random data is not common." + colors.RESET)
         return info
 
