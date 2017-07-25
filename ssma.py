@@ -437,11 +437,14 @@ if __name__ == '__main__':
             print()
 
     if args.report:
-        mal_domains = ransomware_and_malware_domain_check(list(strings[0]))
-        domains = {
-            "normal_domains": list(mal_domains[0]),
-            "malware_domains": list(mal_domains[1]) + list(mal_domains[2])
-        }
+        if internet_connection:
+            mal_domains = ransomware_and_malware_domain_check(list(strings[0]))
+            domains = {
+                "normal_domains": list(mal_domains[0]),
+                "malware_domains": list(mal_domains[1]) + list(mal_domains[2])
+            }
+        else:
+            domains = list(strings[0])
         strings_result = {
             "Domains": domains,
             "IP-addresses": strings[1],
