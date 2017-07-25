@@ -335,7 +335,7 @@ class PEScanner:
             continue_message = True
             debug = True
             if report == "output":
-                print("\t\"flags\": {\n\t\t\"debug\": \"True\",")
+                pass
             else:
                 print(
                     colors.LIGHT_RED + "File contains some debug information, in majority of regular PE files, should not "
@@ -374,14 +374,7 @@ class ELFScanner:
         with open(self.filename, 'rb') as f:
             file = f.read()
             if report == "output":
-                info.append("\"File\": \"{}\",".format(self.filename.split("/")[len(self.filename.split("/")) - 1]))
-                info.append("\"Size\": \"{} bytes\",".format(os.path.getsize(self.filename)))
-                info.append("\"Type\": \"{}\",".format(magic.from_file(self.filename, mime=True)))
-                info.append("\"MD5\":  \"{}\",".format(hashlib.md5(file).hexdigest()))
-                info.append("\"SHA1\": \"{}\",".format(hashlib.sha1(file).hexdigest()))
-                if ssdeep_r:
-                    info.append("\"ssdeep\": \"{}\",".format(self.get_ssdeep()))
-                return info
+                return ""
             else:
                 info.append("File: {}".format(self.filename))
                 info.append("Size: {} bytes".format(os.path.getsize(self.filename)))

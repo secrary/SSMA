@@ -4,3 +4,4 @@ yara-python
 virustotal-api
 gitpython
 pyelftools
+elasticsearch

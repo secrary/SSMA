@@ -11,6 +11,7 @@ import argparse
 import os
 import shutil
 import magic
+from elasticsearch import Elasticsearch
 
 from src import colors
 from src.blacklisted_domain_ip import ransomware_and_malware_domain_check
@@ -31,9 +32,14 @@ if __name__ == '__main__':
     parser.add_argument("-u", "--update", help="Update Yara-Rules (yes/no)")
     parser.add_argument("-y", "--yara", help="Scan file with your Yara-Rule")
     parser.add_argument("-D", "--directory", help="Mass analysis from a dir (/path/)")
-    parser.add_argument("-r", "--report", help="Generate json format report (yes/no/output)")
+    parser.add_argument("-r", "--report", help="Generate json format report (yes/no/elasticsearch)")
 
     args = parser.parse_args()
+
+    if args.report == "elasticsearch":
+        args.report = "output"
+    else:
+        pass
 
     # Added by Yang
     if args.directory and not args.filename:
@@ -658,6 +664,8 @@ if __name__ == '__main__':
                 print("================================================================================")
                 exit()
     if args.report == "output":
-        print(file_report.dump())
+        rDump = file_report.dump()
+        es = Elasticsearch()
+        res = es.index(index="malice", doc_type='sample', id=uuid.uuid4(), body=rDump)
     else:
         print(colors.YELLOW + "Ups... " + colors.CYAN + "That's all :)" + colors.RESET + "\n")
