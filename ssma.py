@@ -11,6 +11,7 @@ import argparse
 import os
 import shutil
 import magic
+import uuid
 from elasticsearch import Elasticsearch
 
 from src import colors

@@ -197,7 +197,17 @@ class PEScanner:
         with open(self.filename, 'rb') as f:
             file = f.read()
             if report == "output":
-                return ""
+                info.append("File: {}".format(self.filename))
+                info.append("Size: {} bytes".format(os.path.getsize(self.filename)))
+                info.append("Type: {}".format(magic.from_file(self.filename, mime=True)))
+                info.append("MD5:  {}".format(hashlib.md5(file).hexdigest()))
+                info.append("SHA1: {}".format(hashlib.sha1(file).hexdigest()))
+                if ssdeep_r:
+                    info.append("ssdeep: {}".format(self.get_ssdeep()))
+                info.append("Date: {}".format(time.ctime(self.pe.FILE_HEADER.TimeDateStamp)))
+                info.append("PE file entropy: {}".format(
+                    self.pe_entropy if not low_high_entropy else colors.LIGHT_RED + str(
+                        self.pe_entropy) + colors.RESET))
             else:
                 info.append("File: {}".format(self.filename))
                 info.append("Size: {} bytes".format(os.path.getsize(self.filename)))
