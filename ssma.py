@@ -20,7 +20,7 @@ from src.check_updates import check_internet_connection, download_yara_rules_git
 from src.check_virustotal import virustotal
 from src.file_strings import get_strings
 from src.mass_analysis import start_scan
-from src.pe_report import pe_report, elf_report, others_report
+from src.report import pe_report, elf_report, others_report
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Simple Static Malware Analyzer")
