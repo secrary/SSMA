@@ -5,6 +5,7 @@ Added by Yang
 
 import os
 
+
 def start_scan(args):
     dir = os.path.abspath(args.directory)
     list = os.listdir(dir)
