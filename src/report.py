@@ -11,7 +11,7 @@ from src.check_strings import ascii_strings, unicode_strings
 class pe_report:
     def __init__(self, pe, report):
         self.filename = pe.filename
-        self.file_info = pe.file_info(report)
+        self.file_info = pe.file_info(report, True)
         self._tsl = pe.checkTSL()
         self.check_imports = pe.check_imports()
         self.check_date = pe.check_date(True)

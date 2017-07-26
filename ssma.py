@@ -22,7 +22,7 @@ from src.check_updates import check_internet_connection, download_yara_rules_git
 from src.check_virustotal import virustotal
 from src.file_strings import get_strings
 from src.mass_analysis import start_scan
-from src.pe_report import pe_report, elf_report, others_report
+from src.report import pe_report, elf_report, others_report
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Simple Static Malware Analyzer")
@@ -99,7 +99,7 @@ if __name__ == '__main__':
             pass
         else:
             print(colors.BOLD + colors.YELLOW + "File Details: " + colors.RESET)
-        for n in pe.file_info(args.report):
+        for n in pe.file_info(args.report, False):
             if args.report == "output":
                 pass
             else:
@@ -228,34 +228,58 @@ if __name__ == '__main__':
 
         depends = elf.dependencies()
         if depends:
-            print(colors.BOLD + colors.YELLOW + "Dependencies: " + colors.RESET)
-            for line in depends:
-                line = line.decode('utf-8', 'ignore').replace("\n", "")
-                print(line)
-            print()
-            print("================================================================================")
-            if args.Flush == "off":
-                if input("Continue? [Y/n] ") is 'n':
-                    exit()
-            print()
+            if args.report == "output":
+                pass
+            else:
+                print(colors.BOLD + colors.YELLOW + "Dependencies: " + colors.RESET)
+                for line in depends:
+                    line = line.decode('utf-8', 'ignore').replace("\n", "")
+                    print(line)
+                print()
+                print("================================================================================")
+                if args.Flush == "off":
+                    if input("Continue? [Y/n] ") is 'n':
+                        exit()
+                print()
 
         prog_header = elf.program_header()
         if prog_header:
-            print(colors.BOLD + colors.YELLOW + "Program Header Information: " + colors.RESET)
-            for line in prog_header:
-                line = line.decode('utf-8', 'ignore').replace("\n", "")
-                print(line)
-            print()
-            print("================================================================================")
-            if args.Flush == "off":
-                if input("Continue? [Y/n] ") is 'n':
-                    exit()
-            print()
+            if args.report == "output":
+                pass
+            else:
+                print(colors.BOLD + colors.YELLOW + "Program Header Information: " + colors.RESET)
+                for line in prog_header:
+                    line = line.decode('utf-8', 'ignore').replace("\n", "")
+                    print(line)
+                print()
+                print("================================================================================")
+                if args.Flush == "off":
+                    if input("Continue? [Y/n] ") is 'n':
+                        exit()
+                print()
 
         sect_header = elf.section_header()
         if sect_header:
-            print(colors.BOLD + colors.YELLOW + "Section Header Information: " + colors.RESET)
-            for line in sect_header:
+            if args.report == "output":
+                pass
+            else:
+                print(colors.BOLD + colors.YELLOW + "Section Header Information: " + colors.RESET)
+                for line in sect_header:
+                    line = line.decode('utf-8', 'ignore').replace("\n", "")
+                    print(line)
+                print()
+                print("================================================================================")
+                if args.Flush == "off":
+                    if input("Continue? [Y/n] ") is 'n':
+                        exit()
+                print()
+
+        syms = elf.symbols()
+        if args.report == "output":
+            pass
+        else:
+            print(colors.BOLD + colors.YELLOW + "Symbol Information: " + colors.RESET)
+            for line in syms:
                 line = line.decode('utf-8', 'ignore').replace("\n", "")
                 print(line)
             print()
@@ -264,18 +288,6 @@ if __name__ == '__main__':
                 if input("Continue? [Y/n] ") is 'n':
                     exit()
             print()
-
-        syms = elf.symbols()
-        print(colors.BOLD + colors.YELLOW + "Symbol Information: " + colors.RESET)
-        for line in syms:
-            line = line.decode('utf-8', 'ignore').replace("\n", "")
-            print(line)
-        print()
-        print("================================================================================")
-        if args.Flush == "off":
-            if input("Continue? [Y/n] ") is 'n':
-                exit()
-        print()
 
         if args.report:
             if not os.path.exists("analysis_report"):
@@ -331,31 +343,34 @@ if __name__ == '__main__':
 
     strings = get_strings(filename=args.filename).get_result()
     if strings[0]:
-        if args.report == "output":
-            pass
-        else:
-            print(colors.BOLD + colors.YELLOW + "Possible domains in strings of the file: " + colors.RESET)
+        if internet_connection:
             mal_domains = ransomware_and_malware_domain_check(list(strings[0]))
-            for n in mal_domains[0]:
-                print('\t', n)
-            print()
-            if mal_domains[1]:
-                print("\t" + colors.RED + "Abuse.ch's Ransomware Domain Blocklist: " + colors.RESET)
-                for n in mal_domains[1]:
+            if args.report == "output":
+                pass
+            else:
+                print(colors.BOLD + colors.YELLOW + "Possible domains in strings of the file: " + colors.RESET)
+                mal_domains = ransomware_and_malware_domain_check(list(strings[0]))
+                for n in mal_domains[0]:
                     print('\t', n)
                 print()
-            if mal_domains[2]:
-                print(
-                    "\t" + colors.RED + "A list of domains that are known to be used to propagate malware by http://www.malwaredomains.com/" + colors.RESET)
-                for n in mal_domains[2]:
-                    print('\t', n)
+                if mal_domains[1]:
+                    print("\t" + colors.RED + "Abuse.ch's Ransomware Domain Blocklist: " + colors.RESET)
+                    for n in mal_domains[1]:
+                        print('\t', n)
+                    print()
+                if mal_domains[2]:
+                    print(
+                        "\t" + colors.RED + "A list of domains that are known to be used to propagate malware by http://www.malwaredomains.com/" + colors.RESET)
+                    for n in mal_domains[2]:
+                        print('\t', n)
+                    print()
                 print()
-            print()
-            print("================================================================================")
-            if args.Flush == "off":
-                if input("Continue? [Y/n] ") is 'n':
-                    exit()
-            print()
+                print("================================================================================")
+                if args.Flush == "off":
+                    if input("Continue? [Y/n] ") is 'n':
+                        exit()
+                print()
+
 
     if strings[1]:
         if args.report == "output":
@@ -386,11 +401,14 @@ if __name__ == '__main__':
             print()
 
     if args.report:
-        mal_domains = ransomware_and_malware_domain_check(list(strings[0]))
-        domains = {
-            "normal_domains": list(mal_domains[0]),
-            "malware_domains": list(mal_domains[1]) + list(mal_domains[2])
-        }
+        if internet_connection:
+            mal_domains = ransomware_and_malware_domain_check(list(strings[0]))
+            domains = {
+                "normal_domains": list(mal_domains[0]),
+                "malware_domains": list(mal_domains[1]) + list(mal_domains[2])
+            }
+        else:
+            domains = list(strings[0])
         strings_result = {
             "Domains": domains,
             "IP-addresses": strings[1],
