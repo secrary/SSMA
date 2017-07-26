@@ -11,6 +11,8 @@ import argparse
 import os
 import shutil
 import magic
+import uuid
+from elasticsearch import Elasticsearch
 
 from src import colors
 from src.blacklisted_domain_ip import ransomware_and_malware_domain_check
@@ -31,9 +33,14 @@ if __name__ == '__main__':
     parser.add_argument("-u", "--update", help="Update Yara-Rules (yes/no)")
     parser.add_argument("-y", "--yara", help="Scan file with your Yara-Rule")
     parser.add_argument("-D", "--directory", help="Mass analysis from a dir (/path/)")
-    parser.add_argument("-r", "--report", help="Generate json format report (yes/no/output)")
+    parser.add_argument("-r", "--report", help="Generate json format report (yes/no/elasticsearch)")
 
     args = parser.parse_args()
+
+    if args.report == "elasticsearch":
+        args.report = "output"
+    else:
+        pass
 
     # Added by Yang
     if args.directory and not args.filename:
@@ -89,16 +96,16 @@ if __name__ == '__main__':
     if filetype == 'application/x-dosexec':
         pe = PEScanner(filename=args.filename)
         if args.report == "output":
-            print('{\"results\": {\n\t\"File Details\": {')
+            pass
         else:
             print(colors.BOLD + colors.YELLOW + "File Details: " + colors.RESET)
         for n in pe.file_info(args.report, False):
             if args.report == "output":
-                print('\t', n)
+                pass
             else:
                 print('\t', n)
         if args.report == "output":
-            print("\t},")
+            pass
         else:
             print()
             print("================================================================================")
@@ -126,7 +133,7 @@ if __name__ == '__main__':
         _tls = pe.checkTSL()
         if _tls is not None:
             if args.report == "output":
-                print("\t\t\".tls\": \"True\",\n\t},")  # EDIT AFTER HANDLING SECTIONS
+                pass
             else:
                 print(colors.RED + "The executable contains a .tls section.\n" + colors.RESET + "A TLS callback can be used to execute code before the entry point \
                 and therefore execute secretly in a debugger.")
@@ -147,12 +154,7 @@ if __name__ == '__main__':
         if any(tr[1] for tr in check_file_header["flags"]):
             continue_message = True
             if args.report == "output":
-                found = 0
-                for n in check_file_header["flags"]:
-                    if n[1]:
-                        found += 1
-                        print("\t\"flags\": {\n\t\t\"flag\":" + ' \"' + n[0] + '\",')
-                print("\t\t\"found\": " + str(found) + "\n\t},")
+                pass
             else:
                 print(colors.LIGHT_RED + "Suspicious flags in the characteristics of the PE file: " + colors.RESET)
                 for n in check_file_header["flags"]:
@@ -172,9 +174,7 @@ if __name__ == '__main__':
         check_date_result = pe.check_date(False)
         if check_date_result:
             if args.report == "output":
-                print("\t\"com-date\": {\n\t\t\"date\": " + str(
-                    check_date_result.split(" ")[len(check_date_result.split(" ")) - 1]))
-                print("\t},")
+                pass
             else:
                 print(check_date_result)
                 print()
@@ -186,14 +186,7 @@ if __name__ == '__main__':
 
         check_imports_result = pe.check_imports()
         if args.report == "output":
-            print("\t\"Windows-Functions\": {")
-            if check_imports_result:
-                i = 0
-                for n in check_imports_result:
-                    n = n.split("^")
-                    print("\t\t\"" + n[0] + "\": \"True\",")
-                    i += 1
-                print("\t\t\"Total\": " + str(i) + "\n\t},")
+            pass
         else:
             if check_imports_result:
                 print(
@@ -215,7 +208,7 @@ if __name__ == '__main__':
         elf = ELFScanner(filename=args.filename)
 
         if args.report == "output":
-            print('{\"results\": {\n\t\"File Details\": {')
+            pass
         else:
             print(colors.BOLD + colors.YELLOW + "File Details: " + colors.RESET)
         for n in elf.file_info(args.report):
@@ -224,7 +217,7 @@ if __name__ == '__main__':
             else:
                 print('\t', n)
         if args.report == "output":
-            print("\t},")
+            pass
         else:
             print()
             print("================================================================================")
@@ -235,34 +228,58 @@ if __name__ == '__main__':
 
         depends = elf.dependencies()
         if depends:
-            print(colors.BOLD + colors.YELLOW + "Dependencies: " + colors.RESET)
-            for line in depends:
-                line = line.decode('utf-8', 'ignore').replace("\n", "")
-                print(line)
-            print()
-            print("================================================================================")
-            if args.Flush == "off":
-                if input("Continue? [Y/n] ") is 'n':
-                    exit()
-            print()
+            if args.report == "output":
+                pass
+            else:
+                print(colors.BOLD + colors.YELLOW + "Dependencies: " + colors.RESET)
+                for line in depends:
+                    line = line.decode('utf-8', 'ignore').replace("\n", "")
+                    print(line)
+                print()
+                print("================================================================================")
+                if args.Flush == "off":
+                    if input("Continue? [Y/n] ") is 'n':
+                        exit()
+                print()
 
         prog_header = elf.program_header()
         if prog_header:
-            print(colors.BOLD + colors.YELLOW + "Program Header Information: " + colors.RESET)
-            for line in prog_header:
-                line = line.decode('utf-8', 'ignore').replace("\n", "")
-                print(line)
-            print()
-            print("================================================================================")
-            if args.Flush == "off":
-                if input("Continue? [Y/n] ") is 'n':
-                    exit()
-            print()
+            if args.report == "output":
+                pass
+            else:
+                print(colors.BOLD + colors.YELLOW + "Program Header Information: " + colors.RESET)
+                for line in prog_header:
+                    line = line.decode('utf-8', 'ignore').replace("\n", "")
+                    print(line)
+                print()
+                print("================================================================================")
+                if args.Flush == "off":
+                    if input("Continue? [Y/n] ") is 'n':
+                        exit()
+                print()
 
         sect_header = elf.section_header()
         if sect_header:
-            print(colors.BOLD + colors.YELLOW + "Section Header Information: " + colors.RESET)
-            for line in sect_header:
+            if args.report == "output":
+                pass
+            else:
+                print(colors.BOLD + colors.YELLOW + "Section Header Information: " + colors.RESET)
+                for line in sect_header:
+                    line = line.decode('utf-8', 'ignore').replace("\n", "")
+                    print(line)
+                print()
+                print("================================================================================")
+                if args.Flush == "off":
+                    if input("Continue? [Y/n] ") is 'n':
+                        exit()
+                print()
+
+        syms = elf.symbols()
+        if args.report == "output":
+            pass
+        else:
+            print(colors.BOLD + colors.YELLOW + "Symbol Information: " + colors.RESET)
+            for line in syms:
                 line = line.decode('utf-8', 'ignore').replace("\n", "")
                 print(line)
             print()
@@ -271,18 +288,6 @@ if __name__ == '__main__':
                 if input("Continue? [Y/n] ") is 'n':
                     exit()
             print()
-
-        syms = elf.symbols()
-        print(colors.BOLD + colors.YELLOW + "Symbol Information: " + colors.RESET)
-        for line in syms:
-            line = line.decode('utf-8', 'ignore').replace("\n", "")
-            print(line)
-        print()
-        print("================================================================================")
-        if args.Flush == "off":
-            if input("Continue? [Y/n] ") is 'n':
-                exit()
-        print()
 
         if args.report:
             if not os.path.exists("analysis_report"):
@@ -339,22 +344,9 @@ if __name__ == '__main__':
     strings = get_strings(filename=args.filename).get_result()
     if strings[0]:
         if internet_connection:
+            mal_domains = ransomware_and_malware_domain_check(list(strings[0]))
             if args.report == "output":
-                print("\t\"Domains\": {")
-                total = 0
-                mal_domains = ransomware_and_malware_domain_check(list(strings[0]))
-                for n in mal_domains[0]:
-                    print("\t\t\"" + str(n) + "\": \"True\",")
-                    total += 1
-                if mal_domains[1]:
-                    for n in mal_domains[1]:
-                        print("\t\t\"" + str(n) + "\": \"True\",")
-                        total += 1
-                if mal_domains[2]:
-                    for n in mal_domains[2]:
-                        print("\t\t\"" + str(n) + "\": \"True\",")
-                        total += 1
-                print("\t\t\"Total\": " + str(total))
+                pass
             else:
                 print(colors.BOLD + colors.YELLOW + "Possible domains in strings of the file: " + colors.RESET)
                 mal_domains = ransomware_and_malware_domain_check(list(strings[0]))
@@ -378,33 +370,11 @@ if __name__ == '__main__':
                     if input("Continue? [Y/n] ") is 'n':
                         exit()
                 print()
-        else:
-            if args.report == "output":
-                print("\t\"Domains\": {")
-                total = 0
-                for n in strings[0]:
-                    print("\t\t\"" + str(n) + "\": \"True\",")
-                    total += 1
-                print("\t\t\"Total\": " + str(total))
-            else:
-                print(colors.BOLD + colors.YELLOW + "Possible Domains addresses in strings of the file:" + colors.RESET)
-                for n in strings[0]:
-                    print('\t', n)
-                print()
-                print("================================================================================")
-                if args.Flush == "off":
-                    if input("Continue? [Y/n] ") is 'n':
-                        exit()
-                print()
+
 
     if strings[1]:
         if args.report == "output":
-            print("\t\"IP-addresses\": {")
-            total = 0
-            for n in strings[1]:
-                print("\t\t\"" + str(n) + "\": \"True\",")
-                total += 1
-            print("\t\t\"Total\": " + str(total))
+            pass
         else:
             print(colors.BOLD + colors.YELLOW + "Possible IP addresses in strings of the file: " + colors.RESET)
             for n in strings[1]:
@@ -418,13 +388,7 @@ if __name__ == '__main__':
 
     if strings[2]:
         if args.report == "output":
-            print("\t\"Email\": {")
-            total = 0
-            for n in strings[2]:
-                print("\t\t\"" + str(n) + "\": \"True\",")
-                total += 1
-            print("\t\t\"Total\": " + str(total))
-            print("\t}")
+            pass
         else:
             print(colors.BOLD + colors.YELLOW + "Possible E-Mail addresses in strings of the file:" + colors.RESET)
             for n in strings[2]:
@@ -458,19 +422,23 @@ if __name__ == '__main__':
         else:
             print(
                 colors.BOLD + colors.YELLOW + "Scan file using Yara-rules.\nWith Yara rules you can create a \"description\" of malware families to detect new samples.\n" + colors.BOLD + colors.CYAN + "\tFor more information: https://virustotal.github.io/yara/\n" + colors.RESET)
-            if not os.path.exists("rules"):
-                os.mkdir("rules")
-            if not os.path.exists("rules_compiled"):
-                os.mkdir("rules_compiled")
-            if not os.listdir("rules"):
+        if not os.path.exists("rules"):
+            os.mkdir("rules")
+        if not os.path.exists("rules_compiled"):
+            os.mkdir("rules_compiled")
+        if not os.listdir("rules"):
+            if args.report == "output":
                 print(colors.BOLD + colors.CYAN + "Downloading Yara-rules... \n" + colors.RESET)
-                download_yara_rules_git()
                 print()
             else:
                 pass
-            if filetype == 'application/x-dosexec':
-                malicious_software = is_malware(filename=args.filename)
-                if malicious_software:
+            download_yara_rules_git()
+        if filetype == 'application/x-dosexec':
+            malicious_software = is_malware(filename=args.filename)
+            if malicious_software:
+                if args.report == "output":
+                    pass
+                else:
                     print(
                         colors.BOLD + colors.YELLOW + "These Yara rules specialised on the identification of well-known malware.\nResult: " + colors.RESET)
                     for n in malicious_software:
@@ -485,8 +453,11 @@ if __name__ == '__main__':
                             exit()
                     print()
 
-                packed = is_file_packed(filename=args.filename)
-                if packed:
+            packed = is_file_packed(filename=args.filename)
+            if packed:
+                if args.report == "output":
+                    pass
+                else:
                     print(
                         colors.BOLD + colors.YELLOW + "These Yara Rules aimed to detect well-known sofware packers, that can be used by malware to hide itself.\nResult: " + colors.RESET)
                     for n in packed:
@@ -501,8 +472,11 @@ if __name__ == '__main__':
                             exit()
                     print()
 
-                crypto = check_crypto(filename=args.filename)
-                if crypto:
+            crypto = check_crypto(filename=args.filename)
+            if crypto:
+                if args.report == "output":
+                    pass
+                else:
                     print(
                         colors.BOLD + colors.YELLOW + "These Yara rules aimed to detect the existence of cryptographic algoritms." + colors.RESET)
                     print(colors.YELLOW + "Detected cryptographic algorithms: " + colors.RESET)
@@ -518,8 +492,11 @@ if __name__ == '__main__':
                             exit()
                     print()
 
-                anti_vm = is_antidb_antivm(filename=args.filename)
-                if anti_vm:
+            anti_vm = is_antidb_antivm(filename=args.filename)
+            if anti_vm:
+                if args.report == "output":
+                    pass
+                else:
                     print(
                         colors.BOLD + colors.YELLOW + "These Yara Rules aimed to detect anti-debug and anti-virtualization techniques used by malware to evade automated analysis.\nResult: " + colors.RESET)
                     for n in anti_vm:
@@ -534,11 +511,14 @@ if __name__ == '__main__':
                             exit()
                     print()
 
-                your_target = {}
-                if args.yara:
-                    yara = str(os.path.realpath(args.yara))
-                    your_target = is_your_target(args.filename, yara)
-                    if your_target:
+            your_target = {}
+            if args.yara:
+                yara = str(os.path.realpath(args.yara))
+                your_target = is_your_target(args.filename, yara)
+                if your_target:
+                    if args.report == "output":
+                        pass
+                    else:
                         print(
                             colors.BOLD + colors.YELLOW + "These Yara Rules are created by yourself and aimed to detecte something you need.\nResult: " + colors.RESET)
                         for n in your_target:
@@ -553,58 +533,61 @@ if __name__ == '__main__':
                                 exit()
                         print()
 
-                if args.report:
-                    malicious_software_result = {}
-                    packed_result = {}
-                    crypto_result = {}
-                    anti_vm_result = {}
-                    your_target_result = {}
-                    if malicious_software:
-                        for n in malicious_software:
-                            try:
-                                malicious_software_result[str(n)] = n.meta['description']
-                            except:
-                                malicious_software_result[str(n)] = None
-                    if packed:
-                        for n in packed:
-                            try:
-                                packed_result[str(n)] = n.meta['description']
-                            except:
-                                packed_result[str(n)] = None
-                    if crypto:
-                        for n in crypto:
-                            try:
-                                crypto_result[str(n)] = n.meta['description']
-                            except:
-                                crypto_result[str(n)] = None
-                    if anti_vm:
-                        for n in anti_vm:
-                            try:
-                                anti_vm_result[str(n)] = n.meta['description']
-                            except:
-                                anti_vm_result[str(n)] = None
-                    if your_target:
-                        for n in your_target:
-                            try:
-                                your_target_result[str(n)] = n.meta['description']
-                            except:
-                                your_target_result[str(n)] = None
-                    yara_result = {
-                        "malicious_software": malicious_software_result,
-                        "packed": packed_result,
-                        "crypto": crypto_result,
-                        "anti_vm": anti_vm_result,
-                        "your_target": your_target_result
-                    }
-                    file_report.yara(yara_result)
-                    file_report.write()
+            if args.report:
+                malicious_software_result = {}
+                packed_result = {}
+                crypto_result = {}
+                anti_vm_result = {}
+                your_target_result = {}
+                if malicious_software:
+                    for n in malicious_software:
+                        try:
+                            malicious_software_result[str(n)] = n.meta['description']
+                        except:
+                            malicious_software_result[str(n)] = None
+                if packed:
+                    for n in packed:
+                        try:
+                            packed_result[str(n)] = n.meta['description']
+                        except:
+                            packed_result[str(n)] = None
+                if crypto:
+                    for n in crypto:
+                        try:
+                            crypto_result[str(n)] = n.meta['description']
+                        except:
+                            crypto_result[str(n)] = None
+                if anti_vm:
+                    for n in anti_vm:
+                        try:
+                            anti_vm_result[str(n)] = n.meta['description']
+                        except:
+                            anti_vm_result[str(n)] = None
+                if your_target:
+                    for n in your_target:
+                        try:
+                            your_target_result[str(n)] = n.meta['description']
+                        except:
+                            your_target_result[str(n)] = None
+                yara_result = {
+                    "malicious_software": malicious_software_result,
+                    "packed": packed_result,
+                    "crypto": crypto_result,
+                    "anti_vm": anti_vm_result,
+                    "your_target": your_target_result
+                }
+                file_report.yara(yara_result)
+                file_report.write()
 
-            if filetype == 'application/x-executable':
-                your_target = {}
-                if args.yara:
-                    yara = str(os.path.realpath(args.yara))
-                    your_target = is_your_target(args.filename, yara)
-                    if your_target:
+        if filetype == 'application/x-executable':
+            your_target = {}
+            if args.yara:
+                yara = str(os.path.realpath(args.yara))
+                your_target = is_your_target(args.filename, yara)
+                if your_target:
+                    if args.report == "output":
+                        pass
+                    else:
                         print(
                             colors.BOLD + colors.YELLOW + "These Yara Rules are created by yourself and aimed to detecte something you need.\nResult: " + colors.RESET)
                         for n in your_target:
@@ -619,22 +602,23 @@ if __name__ == '__main__':
                                 exit()
                         print()
 
-                if args.report:
-                    your_target_result = {}
-                    if your_target:
-                        for n in your_target:
-                            try:
-                                your_target_result[str(n)] = n.meta['description']
-                            except:
-                                your_target_result[str(n)] = None
-                    yara_result = {
-                        "your_target": your_target_result
-                    }
-                    file_report.yara(yara_result)
-                    file_report.write()
+            if args.report:
+                your_target_result = {}
+                if your_target:
+                    for n in your_target:
+                        try:
+                            your_target_result[str(n)] = n.meta['description']
+                        except:
+                            your_target_result[str(n)] = None
+                yara_result = {
+                    "your_target": your_target_result
+                }
+                file_report.yara(yara_result)
+                file_report.write()
 
-            if args.document:
-                malicious_document = is_malicious_document(filename=args.filename)
+        if args.document:
+            malicious_document = is_malicious_document(filename=args.filename)
+            if args.report == "output":
                 print(
                     colors.BOLD + colors.YELLOW + "These Yara Rules to be used with documents to find if they have been crafted to leverage malicious code.\nResult: " + colors.RESET)
                 if malicious_document:
@@ -649,11 +633,14 @@ if __name__ == '__main__':
                             exit()
                     print()
 
-                your_target = {}
-                if args.yara:
-                    yara = str(os.path.realpath(args.yara))
-                    your_target = is_your_target(args.filename, yara)
-                    if your_target:
+            your_target = {}
+            if args.yara:
+                yara = str(os.path.realpath(args.yara))
+                your_target = is_your_target(args.filename, yara)
+                if your_target:
+                    if args.report == "output":
+                        pass
+                    else:
                         print(
                             colors.BOLD + colors.YELLOW + "These Yara Rules are created by yourself and aimed to detecte something you need.\nResult: " + colors.RESET)
                         for n in your_target:
@@ -668,34 +655,36 @@ if __name__ == '__main__':
                                 exit()
                         print()
 
-                if args.report:
-                    your_target_result = {}
-                    if your_target:
-                        for n in your_target:
-                            try:
-                                your_target_result[str(n)] = n.meta['description']
-                            except:
-                                your_target_result[str(n)] = None
+            if args.report:
+                your_target_result = {}
+                if your_target:
+                    for n in your_target:
+                        try:
+                            your_target_result[str(n)] = n.meta['description']
+                        except:
+                            your_target_result[str(n)] = None
 
-                    malicious_document_result = {}
-                    if malicious_document:
-                        for n in malicious_document:
-                            try:
-                                malicious_document_result[str(n)] = n['description']
-                            except:
-                                malicious_document_result[str(n)] = None
-                    yara_result = {
-                        "malicious_document": malicious_document_result,
-                        "your_target": your_target_result
-                    }
-                    file_report.yara(yara_result)
-                    file_report.write()
+                malicious_document_result = {}
+                if malicious_document:
+                    for n in malicious_document:
+                        try:
+                            malicious_document_result[str(n)] = n['description']
+                        except:
+                            malicious_document_result[str(n)] = None
+                yara_result = {
+                    "malicious_document": malicious_document_result,
+                    "your_target": your_target_result
+                }
+                file_report.yara(yara_result)
+                file_report.write()
 
-                else:
-                    print(colors.BOLD + "\tNothing found" + colors.RESET)
-                    print("================================================================================")
-                    exit()
+            else:
+                print(colors.BOLD + "\tNothing found" + colors.RESET)
+                print("================================================================================")
+                exit()
     if args.report == "output":
-        print("}}")
+        rDump = file_report.dump()
+        es = Elasticsearch()
+        res = es.index(index="malice", doc_type='sample', id=uuid.uuid4(), body=rDump)
     else:
         print(colors.YELLOW + "Ups... " + colors.CYAN + "That's all :)" + colors.RESET + "\n")
