@@ -205,9 +205,14 @@ class PEScanner:
                 if ssdeep_r:
                     info.append("ssdeep: {}".format(self.get_ssdeep()))
                 info.append("Date: {}".format(time.ctime(self.pe.FILE_HEADER.TimeDateStamp)))
-                info.append("PE file entropy: {}".format(
-                    self.pe_entropy if not low_high_entropy else colors.LIGHT_RED + str(
-                        self.pe_entropy) + colors.RESET))
+                if is_report:
+                    info.append("PE file entropy: {}".format(
+                        self.pe_entropy
+                    ))
+                else:
+                    info.append("PE file entropy: {}".format(
+                        self.pe_entropy if not low_high_entropy else colors.LIGHT_RED + str(
+                            self.pe_entropy) + colors.RESET))
             else:
                 info.append("File: {}".format(self.filename))
                 info.append("Size: {} bytes".format(os.path.getsize(self.filename)))
