@@ -6,14 +6,12 @@ LABEL malice.plugin.category="av"
 LABEL malice.plugin.mime="*"
 LABEL malice.plugin.docker.engine="*"
 
-#ADD . /malware
 
 RUN git clone https://github.com/pielco11/SSMA.git && cd SSMA && pip3 install -r requirements.txt
-
 RUN chmod +x /SSMA/ssma.py && ln -s /SSMA/ssma.py /bin/ssma && echo
 
 WORKDIR  /malware
 
 CMD ["ssma", "-h"]
 
-ENTRYPOINT ["ssma", "-r", "elasticsearch"]
+ENTRYPOINT ["ssma", "-r", "elasticsearch", "-f"]
