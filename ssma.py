@@ -26,7 +26,7 @@ from src.report import pe_report, elf_report, others_report
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Simple Static Malware Analyzer")
-    parser.add_argument("-f", "--filename", help="/path/to/file")
+    parser.add_argument("filename", help="/path/to/file")
     parser.add_argument("-k", "--api-key", help="Virustotal API key")
     parser.add_argument("-d", "--document", help="check document/MS Office file", action="store_true")
     parser.add_argument("-F", "--Flush", help="Flush output, no interrupt (on/off)")
