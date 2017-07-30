@@ -16,4 +16,4 @@ WORKDIR  /malware
 
 CMD ["ssma", "-h"]
 
-ENTRYPOINT ["ssma", "-r", "elasticsearch" ,"-f"]
+ENTRYPOINT ["ssma", "-r", "elasticsearch"]
