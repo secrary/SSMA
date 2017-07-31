@@ -12,6 +12,7 @@ import os
 import shutil
 import magic
 import uuid
+import hashlib
 from elasticsearch import Elasticsearch
 
 from src import colors
@@ -34,11 +35,6 @@ if __name__ == '__main__':
     parser.add_argument("-y", "--yara", help="Scan file with your Yara-Rule")
     parser.add_argument("-D", "--directory", help="Mass analysis from a dir (/path/)")
     parser.add_argument("-r", "--report", help="Generate json format report (yes/no/elasticsearch)")
-    parser.add_argument("-t", "--table", help="output as Markdown table")
-    parser.add_argument("-c", "--callback", help="POST results to Malice webhook [$MALICE_ENDPOINT]")
-    parser.add_argument("-x", "--proxy", help="proxy settings for Malice webhook endpoint [$MALICE_PROXY]")
-    parser.add_argument("--timeout", help="malice plugin timeout (in seconds) (default: 60) [$MALICE_TIMEOUT]")
-    parser.add_argument("--elasticsearch", help="elasitcsearch address for Malice to store results [$MALICE_ELASTICSEARCH]")
 
     args = parser.parse_args()
 
@@ -689,7 +685,10 @@ if __name__ == '__main__':
                 exit()
     if args.report == "output":
         rDump = file_report.dump()
-        es = Elasticsearch()
-        res = es.index(index="malice", doc_type='sample', id=uuid.uuid4(), body=rDump)
+        hasher = hashlib.sha256()
+        hasher.update(args.filename)
+        hashFile = hasher.hexdigest()
+        es = Elasticsearch(["elasticsearch"])
+        res = es.index(index="malice", doc_type='sample', id=os.environ.get('MALICE_SCANID',hashFile), body=rDump)
     else:
         print(colors.YELLOW + "Ups... " + colors.CYAN + "That's all :)" + colors.RESET + "\n")
