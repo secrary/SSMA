@@ -687,7 +687,7 @@ if __name__ == '__main__':
     if args.report == "output":
         rDump = file_report.dump()
         hasher = hashlib.sha256()
-        fl = str(args.filename)
+        fl = args.filename
         hasher.update(fl.encode('utf-8'))
         hashFile = hasher.hexdigest()
         if args.table:
