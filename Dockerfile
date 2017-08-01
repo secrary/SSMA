@@ -7,7 +7,7 @@ LABEL malice.plugin.mime="*"
 LABEL malice.plugin.docker.engine="*"
 
 
-RUN git clone https://github.com/pielco11/SSMA.git
+RUN git clone https://github.com/pielco11/SSMA.git && echo
 RUN cd SSMA && pip3 install -r requirements.txt && echo
 RUN chmod +x /SSMA/ssma.py && ln -s /SSMA/ssma.py /bin/ssma && echo
 

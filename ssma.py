@@ -430,10 +430,10 @@ if __name__ == '__main__':
             os.mkdir("rules_compiled")
         if not os.listdir("rules"):
             if args.report == "output":
+                pass
+            else:
                 print(colors.BOLD + colors.CYAN + "Downloading Yara-rules... \n" + colors.RESET)
                 print()
-            else:
-                pass
             download_yara_rules_git()
         if filetype == 'application/x-dosexec':
             malicious_software = is_malware(filename=args.filename)
