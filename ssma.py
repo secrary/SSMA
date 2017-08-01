@@ -687,7 +687,8 @@ if __name__ == '__main__':
     if args.report == "output":
         rDump = file_report.dump()
         hasher = hashlib.sha256()
-        hasher.update(args.filename.encode('utf-8'))
+        fl = str(args.filename)
+        hasher.update(fl.encode('utf-8'))
         hashFile = hasher.hexdigest()
         es = Elasticsearch(["elasticsearch"])
         res = es.index(index="malice", doc_type='sample', id=os.environ.get('MALICE_SCANID',hashFile), body=rDump)
