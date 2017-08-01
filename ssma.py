@@ -691,7 +691,8 @@ if __name__ == '__main__':
         hasher.update(fl.encode('utf-8'))
         hashFile = hasher.hexdigest()
         if args.table:
-            print("**test table Markdown**")
+            print("#### SSMA")
+            print("**just testing**")
             try:
                 es = Elasticsearch(["elasticsearch"])
                 res = es.index(index="malice", doc_type='sample', id=os.environ.get('MALICE_SCANID',hashFile), body=rDump)
