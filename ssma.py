@@ -695,14 +695,14 @@ if __name__ == '__main__':
             print("**just testing**")
             try:
                 es = Elasticsearch(["elasticsearch"])
-                res = es.update(index="malice", doc_type='sample', id=os.environ.get('MALICE_SCANID',hashFile), body=rDump)
+                res = es.update(index="malice", doc_type='sample', id=os.environ.get('MALICE_SCANID',hashFile), body="{\"doc\": " + rDump + "}")
             except:
                 pass
         else:
             print(rDump)
             try:
                 es = Elasticsearch(["elasticsearch"])
-                res = es.update(index="malice", doc_type='sample', id=os.environ.get('MALICE_SCANID',hashFile), body=rDump)
+                res = es.update(index="malice", doc_type='sample', id=os.environ.get('MALICE_SCANID',hashFile), body="{\"doc\": " + rDump + "}")
             except:
                 pass
     else:
