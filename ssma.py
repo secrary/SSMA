@@ -686,10 +686,10 @@ if __name__ == '__main__':
                 exit()
     if args.report == "output":
         rDump = file_report.dump()
-        hasher = hashlib.sha256()
         with open(args.filename, "rb") as ff:
             data = ff.read()
             hashFile = hashlib.sha256(data).hexdigest()
+            print(str(hashFile))
             if args.table:
                 print("#### SSMA")
                 print("**just testing**")
