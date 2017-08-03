@@ -12,6 +12,7 @@ import os
 import shutil
 import magic
 import uuid
+import hashlib
 from elasticsearch import Elasticsearch
 
 from src import colors
@@ -26,7 +27,7 @@ from src.report import pe_report, elf_report, others_report
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Simple Static Malware Analyzer")
-    parser.add_argument("-f", "--filename", help="/path/to/file")
+    parser.add_argument("filename", help="/path/to/file")
     parser.add_argument("-k", "--api-key", help="Virustotal API key")
     parser.add_argument("-d", "--document", help="check document/MS Office file", action="store_true")
     parser.add_argument("-F", "--Flush", help="Flush output, no interrupt (on/off)")
@@ -34,6 +35,7 @@ if __name__ == '__main__':
     parser.add_argument("-y", "--yara", help="Scan file with your Yara-Rule")
     parser.add_argument("-D", "--directory", help="Mass analysis from a dir (/path/)")
     parser.add_argument("-r", "--report", help="Generate json format report (yes/no/elasticsearch)")
+    parser.add_argument("-t", "--table", help="Markdown output", action="store_true")
 
     args = parser.parse_args()
 
@@ -428,10 +430,10 @@ if __name__ == '__main__':
             os.mkdir("rules_compiled")
         if not os.listdir("rules"):
             if args.report == "output":
+                pass
+            else:
                 print(colors.BOLD + colors.CYAN + "Downloading Yara-rules... \n" + colors.RESET)
                 print()
-            else:
-                pass
             download_yara_rules_git()
         if filetype == 'application/x-dosexec':
             malicious_software = is_malware(filename=args.filename)
@@ -684,7 +686,23 @@ if __name__ == '__main__':
                 exit()
     if args.report == "output":
         rDump = file_report.dump()
-        es = Elasticsearch()
-        res = es.index(index="malice", doc_type='sample', id=uuid.uuid4(), body=rDump)
+        with open(args.filename, "rb") as ff:
+            data = ff.read()
+            hashFile = hashlib.sha256(data).hexdigest()
+            if args.table:
+                print("#### SSMA")
+                print("**just testing**")
+                try:
+                    es = Elasticsearch(["elasticsearch"])
+                    res = es.update(index="malice", doc_type='sample', id=os.environ.get('MALICE_SCANID',hashFile), body={"\"doc\": " + rDump})
+                except:
+                    pass
+            else:
+                print(rDump)
+                try:
+                    es = Elasticsearch(["elasticsearch"])
+                    res = es.update(index="malice", doc_type='sample', id=os.environ.get('MALICE_SCANID',hashFile), body="{\"doc\": " + rDump + "}")
+                except:
+                    pass
     else:
         print(colors.YELLOW + "Ups... " + colors.CYAN + "That's all :)" + colors.RESET + "\n")
