@@ -689,7 +689,6 @@ if __name__ == '__main__':
         with open(args.filename, "rb") as ff:
             data = ff.read()
             hashFile = hashlib.sha256(data).hexdigest()
-            print(str(hashFile))
             if args.table:
                 print("#### SSMA")
                 print("**just testing**")
