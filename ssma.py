@@ -702,7 +702,7 @@ if __name__ == '__main__':
             print(rDump)
             try:
                 es = Elasticsearch(["elasticsearch"])
-                res = es.index(index="malice", doc_type='sample', id=os.environ.get('MALICE_SCANID',hashFile), body=rDump)
+                res = es.update(index="malice", doc_type='sample', id=os.environ.get('MALICE_SCANID',hashFile), body=rDump)
             except:
                 pass
     else:
