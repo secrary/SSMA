@@ -687,23 +687,23 @@ if __name__ == '__main__':
     if args.report == "output":
         rDump = file_report.dump()
         hasher = hashlib.sha256()
-        fl = args.filename
-        hasher.update(fl.encode('utf-8'))
-        hashFile = hasher.hexdigest()
-        if args.table:
-            print("#### SSMA")
-            print("**just testing**")
-            try:
-                es = Elasticsearch(["elasticsearch"])
-                res = es.update(index="malice", doc_type='sample', id=os.environ.get('MALICE_SCANID',hashFile), body="{\"doc\": " + rDump + "}")
-            except:
-                pass
-        else:
-            print(rDump)
-            try:
-                es = Elasticsearch(["elasticsearch"])
-                res = es.update(index="malice", doc_type='sample', id=os.environ.get('MALICE_SCANID',hashFile), body="{\"doc\": " + rDump + "}")
-            except:
-                pass
+        with open(args.filename, "rb") as ff:
+            data = ff.read()
+            hashFile = hashlib.sha256(data).hexdigest()
+            if args.table:
+                print("#### SSMA")
+                print("**just testing**")
+                try:
+                    es = Elasticsearch(["elasticsearch"])
+                    res = es.update(index="malice", doc_type='sample', id=os.environ.get('MALICE_SCANID',hashFile), body="{\"doc\": " + rDump + "}")
+                except:
+                    pass
+            else:
+                print(rDump)
+                try:
+                    es = Elasticsearch(["elasticsearch"])
+                    res = es.update(index="malice", doc_type='sample', id=os.environ.get('MALICE_SCANID',hashFile), body="{\"doc\": " + rDump + "}")
+                except:
+                    pass
     else:
         print(colors.YELLOW + "Ups... " + colors.CYAN + "That's all :)" + colors.RESET + "\n")
