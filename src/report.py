@@ -64,6 +64,7 @@ class elf_report:
     def __init__(self, elf, report):
         self.filename = elf.filename
         self.file_info = elf.file_info(report)
+        self.checksec = elf.checksec()
         self.dependencies = elf.dependencies().read().decode('utf-8')
         self.elf_header = elf.elf_header().read().decode('utf-8')
         self.program_header = elf.program_header().read().decode('utf-8')
@@ -82,6 +83,7 @@ class elf_report:
         obj = {
             "filename": os.path.basename(self.filename),
             "file_info": self.file_info,
+            "checksec": self.checksec,
             "dependencies": self.dependencies,
             "elf_header": self.elf_header,
             "program_header": self.program_header,
@@ -100,6 +102,7 @@ class elf_report:
         obj = {
             "filename": os.path.basename(self.filename),
             "file_info": self.file_info,
+            "checksec": self.checksec,
             "dependencies": self.dependencies,
             "elf_header": self.elf_header,
             "program_header": self.program_header,

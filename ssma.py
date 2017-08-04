@@ -277,19 +277,35 @@ if __name__ == '__main__':
                 print()
 
         syms = elf.symbols()
-        if args.report == "output":
-            pass
-        else:
-            print(colors.BOLD + colors.YELLOW + "Symbol Information: " + colors.RESET)
-            for line in syms:
-                line = line.decode('utf-8', 'ignore').replace("\n", "")
-                print(line)
-            print()
-            print("================================================================================")
-            if args.Flush == "off":
-                if input("Continue? [Y/n] ") is 'n':
-                    exit()
-            print()
+        if syms:
+            if args.report == "output":
+                pass
+            else:
+                print(colors.BOLD + colors.YELLOW + "Symbol Information: " + colors.RESET)
+                for line in syms:
+                    line = line.decode('utf-8', 'ignore').replace("\n", "")
+                    print(line)
+                print()
+                print("================================================================================")
+                if args.Flush == "off":
+                    if input("Continue? [Y/n] ") is 'n':
+                        exit()
+                print()
+
+        checksec = elf.checksec()
+        if checksec:
+            if args.report == "output":
+                pass
+            else:
+                print(colors.BOLD + colors.YELLOW + "CheckSec Information: " + colors.RESET)
+                for key, value in checksec.items():
+                    print(key + ": " + str(value))
+                print()
+                print("================================================================================")
+                if args.Flush == "off":
+                    if input("Continue? [Y/n] ") is 'n':
+                        exit()
+                print()
 
         if args.report:
             if not os.path.exists("analysis_report"):
