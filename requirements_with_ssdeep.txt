@@ -5,3 +5,5 @@ ssdeep
 virustotal-api
 gitpython
 pyelftools
+elasticsearch
+uuid
