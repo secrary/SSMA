@@ -8,7 +8,8 @@
 """
 
 import argparse, os, json
-import shutil, magic, uuid, hashlib
+import shutil, magic, uuid
+import hashlib, contextlib
 from elasticsearch import Elasticsearch
 
 from src import colors
@@ -21,6 +22,18 @@ from src.file_strings import get_strings
 from src.mass_analysis import start_scan
 from src.report import pe_report, elf_report, others_report
 from src import markdown
+
+####### NEED THIS FOR ELASTICSEARCH
+@contextlib.contextmanager
+def nostderr():
+    savestderr = sys.stderr
+    sys.stderr = os.devnull()
+    try:
+        yield
+    finally:
+        sys.stderr = savestderr
+#####################################
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Simple Static Malware Analyzer")
@@ -710,15 +723,17 @@ if __name__ == '__main__':
                 mdOut = md.write()
                 print(mdOut)
                 try:
-                    es = Elasticsearch(["elasticsearch", "127.0.0.1", os.environ.get("MALICE_ELASTICSEARCH")])
-                    res = es.update(index="malice", doc_type='sample', id=os.environ.get('MALICE_SCANID',hashFile), body={"\"doc\": " + rDump})
+                    with nostderr():
+                        es = Elasticsearch(["elasticsearch", "127.0.0.1", os.environ.get("MALICE_ELASTICSEARCH")])
+                        res = es.update(index="malice", doc_type='sample', id=os.environ.get('MALICE_SCANID',hashFile), body={"\"doc\": " + rDump})
                 except:
                     pass
             else:
                 print(rDump)
                 try:
-                    es = Elasticsearch(["elasticsearch", "127.0.0.1", os.environ.get("MALICE_ELASTICSEARCH")])
-                    res = es.update(index="malice", doc_type='sample', id=os.environ.get('MALICE_SCANID',hashFile), body={"\"doc\": " + rDump})
+                    with nostderr():
+                        es = Elasticsearch(["elasticsearch", "127.0.0.1", os.environ.get("MALICE_ELASTICSEARCH")])
+                        res = es.update(index="malice", doc_type='sample', id=os.environ.get('MALICE_SCANID',hashFile), body={"\"doc\": " + rDump})
                 except:
                     pass
     else:
