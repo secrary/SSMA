@@ -17,4 +17,4 @@ def start_scan(args):
                 if not os.path.exists("analysis_report"):
                     os.mkdir("analysis_report")
 
-                os.system("python3 ssma.py -f %s -r yes" % filename)
+                os.system("python3 ssma.py  %s -r yes" % filename)
