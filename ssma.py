@@ -55,7 +55,7 @@ if __name__ == '__main__':
         pass
 
     # Added by Yang
-    if args.directory and not args.filename:
+    if args.directory:
         start_scan(args)
         exit()
     elif args.directory and args.filename:
