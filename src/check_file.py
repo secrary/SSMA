@@ -275,7 +275,7 @@ class PEScanner:
             else:
                 print("Number of Sections: " + str(number_of_section))
             print()
-            print("{} {} {} {} {}".format(*"Section VirtualAddress VirtualSize SizeofRawData Entropy".split()))
+            print("{} {} {} {} {} {}".format(*"Section VirtualAddress VirtualSize SizeofRawData The_MD5_Hash_of_Each_PE_Sections Entropy".split()))
         h_l_entropy = False
         suspicious_size_of_raw_data = False
         virtual_size = []
@@ -300,10 +300,10 @@ class PEScanner:
                 pass  # TODO
             else:
                 print(
-                    "{:7} {:14} {:11} {:13} {:7}".format(sec_name,
+                    "{:7} {:14} {:11} {:13} {:7} {:14}".format(sec_name,
                                                          hex(section.VirtualAddress),
                                                          section.Misc_VirtualSize,
-                                                         section.SizeOfRawData,
+                                                         section.SizeOfRawData,(section.get_hash_md5()),
                                                          entropy if not for_section else colors.LIGHT_RED + str(
                                                              entropy) + colors.RESET))
             section_info = {
@@ -376,7 +376,37 @@ class PEScanner:
             "debug": debug,
             "flags": flags
         }
+#Both functions NumberfBytesHumanRepresentation & Overlay calculate information if overlay is present in a PE file
+    def NumberOfBytesHumanRepresentation(self, value):
+        if value <= 1024:
+            return '%s bytes' % value
+        elif value < 1024 * 1024:
+            return '%.1f KB' % (float(value) / 1024.0)
+        elif value < 1024 * 1024 * 1024:
+            return '%.1f MB' % (float(value) / 1024.0 / 1024.0)
+        else:
+            return '%.1f GB' % (float(value) / 1024.0 / 1024.0 / 1024.0)
 
+    def overlay(self):       
+        overlayOffset = self.pe.get_overlay_data_start_offset()
+        raw= self.pe.write()
+        if overlayOffset == None:
+            print (' No overlay Data Present')
+        else:
+            print ('Overlay Data present which is often associated with malware') 
+            print(' Start offset: 0x%08x' % overlayOffset)
+            overlaySize = len(raw[overlayOffset:])
+            print(' Size:         0x%08x %s %.2f%%' %     (overlaySize, self.NumberOfBytesHumanRepresentation(overlaySize), float(overlaySize) / float(len(raw)) * 100.0))
+            print(' MD5:          %s' % hashlib.md5(raw[overlayOffset:]).hexdigest())
+            print(' SHA-256:      %s' % hashlib.sha256(raw[overlayOffset:]).hexdigest())
+            overlayMagic = raw[overlayOffset:][:4]
+            if type(overlayMagic[0]) == int:
+                overlayMagic = ''.join([chr(b) for b in overlayMagic])
+                #print(' MAGIC:        %s %s' % (binascii.b2a_hex(overlayMagic), ''.join([IFF(ord(b) >= 32, b, '.') for b in overlayMagic])))
+                #needs to be converted from python 2
+                print(' PE file without overlay:')
+                print('  MD5:          %s' % hashlib.md5(raw[:overlayOffset]).hexdigest())
+                print('  SHA-256:      %s' % hashlib.sha256(raw[:overlayOffset]).hexdigest())
 
 # Added by Yang
 class ELFScanner:
