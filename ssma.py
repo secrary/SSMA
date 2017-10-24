@@ -132,6 +132,8 @@ if __name__ == '__main__':
             file_report = pe_report(pe, args.report)
         else:
             sections = pe.sections_analysis(args.report)
+            print("================================================================================")
+            pe.overlay()
 
         if args.report == "output":
             pass
