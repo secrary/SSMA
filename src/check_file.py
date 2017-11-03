@@ -2,7 +2,7 @@ import hashlib
 import numbers
 import os
 import time
-
+import binascii
 import array
 import magic
 import math
@@ -376,6 +376,19 @@ class PEScanner:
             "debug": debug,
             "flags": flags
         }
+ # CIC: Call If Callable needed for def overlay
+    def CIC(self, expression):
+        if callable(expression):
+            return expression()
+        else:
+            return expression
+
+# IFF: IF Function needed for def overlay
+    def IFF(self, expression, valueTrue, valueFalse):
+        if expression:
+            return self.CIC(valueTrue)
+        else:
+            return self.CIC(valueFalse)   
 #Both functions NumberfBytesHumanRepresentation & Overlay calculate information if overlay is present in a PE file
     def NumberOfBytesHumanRepresentation(self, value):
         if value <= 1024:
@@ -402,8 +415,7 @@ class PEScanner:
             overlayMagic = raw[overlayOffset:][:4]
             if type(overlayMagic[0]) == int:
                 overlayMagic = ''.join([chr(b) for b in overlayMagic])
-                #print(' MAGIC:        %s %s' % (binascii.b2a_hex(overlayMagic), ''.join([IFF(ord(b) >= 32, b, '.') for b in overlayMagic])))
-                #needs to be converted from python 2
+                print(' MAGIC:        %s %s' % (binascii.b2a_hex(overlayMagic.encode('utf-8')), ''.join([self.IFF(ord(b) >= 32, b, '.') for b in overlayMagic])))
                 print(' PE file without overlay:')
                 print('  MD5:          %s' % hashlib.md5(raw[:overlayOffset]).hexdigest())
                 print('  SHA-256:      %s' % hashlib.sha256(raw[:overlayOffset]).hexdigest())
