@@ -40,10 +40,9 @@ if __name__ == '__main__':
     parser.add_argument("filename", help="/path/to/file")
     parser.add_argument("-k", "--api-key", help="Virustotal API key")
     parser.add_argument("-d", "--document", help="check document/MS Office file", action="store_true")
-    parser.add_argument("-F", "--Flush", help="Flush output, no interrupt (on/off)")
     parser.add_argument("-u", "--update", help="Update Yara-Rules (yes/no)")
     parser.add_argument("-y", "--yara", help="Scan file with your Yara-Rule")
-    parser.add_argument("-D", "--directory", help="Mass analysis from a dir (/path/)")
+    parser.add_argument("-D", "--directory", help="Mass analysis from a dir  ./ssma.py (/path/.) period at end of path is necessary")
     parser.add_argument("-r", "--report", help="Generate json format report (yes/no/elasticsearch)")
     parser.add_argument("-t", "--table", help="Markdown output", action="store_true")
 
@@ -121,10 +120,7 @@ if __name__ == '__main__':
         else:
             print()
             print("================================================================================")
-            if args.Flush == "off":
-                if input("Continue? [Y/n] ") is 'n':
-                    exit()
-            print()
+              
 
         if args.report:
             if not os.path.exists("analysis_report"):
@@ -139,10 +135,7 @@ if __name__ == '__main__':
             pass
         else:
             print("================================================================================")
-            if args.Flush == "off":
-                if input("Continue? [Y/n] ") is 'n':
-                    exit()
-            print()
+              
 
         _tls = pe.checkTSL()
         if _tls is not None:
@@ -152,10 +145,7 @@ if __name__ == '__main__':
                 print(colors.RED + "The executable contains a .tls section.\n" + colors.RESET + "A TLS callback can be used to execute code before the entry point \
                 and therefore execute secretly in a debugger.")
                 print("================================================================================")
-                if args.Flush == "off":
-                    if input("Continue? [Y/n] ") is 'n':
-                        exit()
-                print()
+                
 
         check_file_header = pe.check_file_header(args.report)
         continue_message = False
@@ -180,11 +170,7 @@ if __name__ == '__main__':
         else:
             if continue_message:
                 print("================================================================================")
-                if args.Flush == "off":
-                    if input("Continue? [Y/n] ") is 'n':
-                        exit()
-            print()
-
+                
         check_date_result = pe.check_date(False)
         if check_date_result:
             if args.report == "output":
@@ -193,10 +179,7 @@ if __name__ == '__main__':
                 print(check_date_result)
                 print()
                 print("================================================================================")
-                if args.Flush == "off":
-                    if input("Continue? [Y/n] ") is 'n':
-                        exit()
-                print()
+                
 
         check_imports_result = pe.check_imports()
         if args.report == "output":
@@ -211,10 +194,7 @@ if __name__ == '__main__':
                     print('\t' + colors.LIGHT_RED + n[0] + colors.RESET + " - " + n[1])
                 print()
                 print("================================================================================")
-                if args.Flush == "off":
-                    if input("Continue? [Y/n] ") is 'n':
-                        exit()
-                print()
+                
 
     # ELF file -> Linux malware
     # Added by Yang
@@ -235,10 +215,7 @@ if __name__ == '__main__':
         else:
             print()
             print("================================================================================")
-            if args.Flush == "off":
-                if input("Continue? [Y/n] ") is 'n':
-                    exit()
-            print()
+              
 
         depends = elf.dependencies()
         if depends:
@@ -251,10 +228,7 @@ if __name__ == '__main__':
                     print(line)
                 print()
                 print("================================================================================")
-                if args.Flush == "off":
-                    if input("Continue? [Y/n] ") is 'n':
-                        exit()
-                print()
+                
 
         prog_header = elf.program_header()
         if prog_header:
@@ -267,10 +241,7 @@ if __name__ == '__main__':
                     print(line)
                 print()
                 print("================================================================================")
-                if args.Flush == "off":
-                    if input("Continue? [Y/n] ") is 'n':
-                        exit()
-                print()
+                
 
         sect_header = elf.section_header()
         if sect_header:
@@ -283,10 +254,7 @@ if __name__ == '__main__':
                     print(line)
                 print()
                 print("================================================================================")
-                if args.Flush == "off":
-                    if input("Continue? [Y/n] ") is 'n':
-                        exit()
-                print()
+                
 
         syms = elf.symbols()
         if syms:
@@ -299,10 +267,7 @@ if __name__ == '__main__':
                     print(line)
                 print()
                 print("================================================================================")
-                if args.Flush == "off":
-                    if input("Continue? [Y/n] ") is 'n':
-                        exit()
-                print()
+                
 
         checksec = elf.checksec()
         if checksec:
@@ -314,10 +279,7 @@ if __name__ == '__main__':
                     print(key + ": " + str(value))
                 print()
                 print("================================================================================")
-                if args.Flush == "off":
-                    if input("Continue? [Y/n] ") is 'n':
-                        exit()
-                print()
+                
 
         if args.report:
             if not os.path.exists("analysis_report"):
@@ -330,10 +292,7 @@ if __name__ == '__main__':
             print('\t', n)
         print()
         print("================================================================================")
-        if args.Flush == "off":
-            if input("Continue? [Y/n] ") is 'n':
-                exit()
-            print()
+        
 
         if args.report:
             if not os.path.exists("analysis_report"):
@@ -349,10 +308,7 @@ if __name__ == '__main__':
                 print('\t' + colors.CYAN + n[0] + colors.RESET + "-" + colors.LIGHT_RED + n[1] + colors.RESET)
             print()
             print("================================================================================")
-            if args.Flush == "off":
-                if input("Continue? [Y/n] ") is 'n':
-                    exit()
-            print()
+              
 
         elif virus_check[0] == "permalink":
             if virus_check[1]:
@@ -366,10 +322,7 @@ if __name__ == '__main__':
     elif args.api_key and not internet_connection:
         print(colors.RED + "No internet connection" + colors.RESET)
         print("================================================================================")
-        if args.Flush == "off":
-            if input("Continue? [Y/n] ") is 'n':
-                exit()
-        print()
+        
 
     strings = get_strings(filename=args.filename).get_result()
     if strings[0]:
@@ -396,10 +349,7 @@ if __name__ == '__main__':
                     print()
                 print()
                 print("================================================================================")
-                if args.Flush == "off":
-                    if input("Continue? [Y/n] ") is 'n':
-                        exit()
-                print()
+                
 
 
     if strings[1]:
@@ -411,10 +361,7 @@ if __name__ == '__main__':
                 print('\t', n)
             print()
             print("================================================================================")
-            if args.Flush == "off":
-                if input("Continue? [Y/n] ") is 'n':
-                    exit()
-            print()
+              
 
     if strings[2]:
         if args.report == "output":
@@ -425,10 +372,7 @@ if __name__ == '__main__':
                 print('\t', n)
             print()
             print("================================================================================")
-            if args.Flush == "off":
-                if input("Continue? [Y/n] ") is 'n':
-                    exit()
-            print()
+              
 
     if args.report:
         if internet_connection:
@@ -478,10 +422,7 @@ if __name__ == '__main__':
                             print('\t', n)
                     print()
                     print("================================================================================")
-                    if args.Flush == "off":
-                        if input("Continue? [Y/n] ") is 'n':
-                            exit()
-                    print()
+                     
 
             packed = is_file_packed(filename=args.filename)
             if packed:
@@ -497,10 +438,7 @@ if __name__ == '__main__':
                             print('\t', n)
                     print()
                     print("================================================================================")
-                    if args.Flush == "off":
-                        if input("Continue? [Y/n] ") is 'n':
-                            exit()
-                    print()
+                     
 
             crypto = check_crypto(filename=args.filename)
             if crypto:
@@ -517,10 +455,7 @@ if __name__ == '__main__':
                             print('\t', n)
                     print()
                     print("================================================================================")
-                    if args.Flush == "off":
-                        if input("Continue? [Y/n] ") is 'n':
-                            exit()
-                    print()
+                     
 
             anti_vm = is_antidb_antivm(filename=args.filename)
             if anti_vm:
@@ -536,10 +471,7 @@ if __name__ == '__main__':
                             print('\t', n)
                     print()
                     print("================================================================================")
-                    if args.Flush == "off":
-                        if input("Continue? [Y/n] ") is 'n':
-                            exit()
-                    print()
+                     
 
             your_target = {}
             if args.yara:
@@ -558,11 +490,7 @@ if __name__ == '__main__':
                                 print('\t', n)
                         print()
                         print("================================================================================")
-                        if args.Flush == "off":
-                            if input("Continue? [Y/n] ") is 'n':
-                                exit()
-                        print()
-
+                          
             if args.report:
                 malicious_software_result = {}
                 packed_result = {}
@@ -627,11 +555,7 @@ if __name__ == '__main__':
                                 print('\t', n)
                         print()
                         print("================================================================================")
-                        if args.Flush == "off":
-                            if input("Continue? [Y/n] ") is 'n':
-                                exit()
-                        print()
-
+                          
             if args.report:
                 your_target_result = {}
                 if your_target:
@@ -658,10 +582,7 @@ if __name__ == '__main__':
                         except:
                             print('\t', n)
                     print("================================================================================")
-                    if args.Flush == "off":
-                        if input("Continue? [Y/n] ") is 'n':
-                            exit()
-                    print()
+                     
 
             your_target = {}
             if args.yara:
@@ -680,11 +601,7 @@ if __name__ == '__main__':
                                 print('\t', n)
                         print()
                         print("================================================================================")
-                        if args.Flush == "off":
-                            if input("Continue? [Y/n] ") is 'n':
-                                exit()
-                        print()
-
+                          
             if args.report:
                 your_target_result = {}
                 if your_target:
