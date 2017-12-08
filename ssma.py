@@ -40,10 +40,10 @@ if __name__ == '__main__':
     parser.add_argument("filename", help="/path/to/file")
     parser.add_argument("-k", "--api-key", help="Virustotal API key")
     parser.add_argument("-d", "--document", help="check document/MS Office file", action="store_true")
-    parser.add_argument("-u", "--update", help="Update Yara-Rules (yes/no)")
+    parser.add_argument("-u", "--update", help="Update Yara-Rules (yes/no) usage ./ssma.py sample.exe -u yes")
     parser.add_argument("-y", "--yara", help="Scan file with your Yara-Rule")
     parser.add_argument("-D", "--directory", help="Mass analysis from a dir  ./ssma.py (/path/.) period at end of path is necessary")
-    parser.add_argument("-r", "--report", help="Generate json format report (yes/no/elasticsearch)")
+    parser.add_argument("-r", "--report", help="Generate json format report (yes/no/elasticsearch) usage ./ssma.py sample.exe -r yes")
     parser.add_argument("-t", "--table", help="Markdown output", action="store_true")
 
     args = parser.parse_args()
