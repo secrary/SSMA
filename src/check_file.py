@@ -406,7 +406,7 @@ class PEScanner:
         if overlayOffset == None:
             print (' No overlay Data Present')
         else:
-            print ('Overlay Data present which is often associated with malware') 
+            print ('Overlay Data is present which is often associated with malware') 
             print(' Start offset: 0x%08x' % overlayOffset)
             overlaySize = len(raw[overlayOffset:])
             print(' Size:         0x%08x %s %.2f%%' %     (overlaySize, self.NumberOfBytesHumanRepresentation(overlaySize), float(overlaySize) / float(len(raw)) * 100.0))
