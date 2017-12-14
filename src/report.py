@@ -9,7 +9,7 @@ from src.check_strings import ascii_strings, unicode_strings
 
 
 class pe_report:
-    def __init__(self, pe, report):
+    def __init__(self, pe, report, strings):
         self.filename = pe.filename
         self.file_info = pe.file_info(report, True)
         self._tsl = pe.checkTSL()
@@ -17,8 +17,8 @@ class pe_report:
         self.check_date = pe.check_date(True)
         self.sections_analysis = pe.sections_analysis(report)
         self.check_file_header = pe.check_file_header(report)
-        self.ascii_strings = ascii_strings(self.filename)
-        self.unicode_strings = unicode_strings(self.filename)
+        self.ascii_strings = ascii_strings(self.filename, strings)
+        self.unicode_strings = unicode_strings(self.filename, strings)
 
     def domains(self, domains):
         self.domains = domains
