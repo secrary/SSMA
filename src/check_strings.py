@@ -45,7 +45,7 @@ def ascii_strings(filename, enable):
     return strings_list
 
 
-def unicode_strings(filenamem, enalble):
+def unicode_strings(filename, enalble):
     if not enalble:
         strings_list = ""
     else:
