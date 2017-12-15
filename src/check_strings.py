@@ -36,13 +36,19 @@ def is_email(list_of_strings):
     return list(f)
 
 
-def ascii_strings(filename):
-    output = subprocess.check_output(["strings", "-a", filename])
-    strings_list = list(output.decode("utf-8").split('\n'))
+def ascii_strings(filename, enable):
+    if not enable:
+        strings_list = ""
+    else:
+        output = subprocess.check_output(["strings", "-a", filename])
+        strings_list = list(output.decode("utf-8").split('\n'))
     return strings_list
 
 
-def unicode_strings(filename):
-    output = subprocess.check_output(["strings", "-a", "-el", filename])
-    strings_list = list(output.decode("utf-8").split('\n'))
+def unicode_strings(filename, enalble):
+    if not enalble:
+        strings_list = ""
+    else:
+        output = subprocess.check_output(["strings", "-a", "-el", filename])
+        strings_list = list(output.decode("utf-8").split('\n'))
     return strings_list
