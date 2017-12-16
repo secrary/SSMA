@@ -285,7 +285,7 @@ if __name__ == '__main__':
         if args.report:
             if not os.path.exists("analysis_report"):
                 os.mkdir("analysis_report")
-            file_report = elf_report(elf, args.report)
+            file_report = (elf, args.report, args.strings)
 
     else:
         print(colors.BOLD + colors.YELLOW + "File Details: " + colors.RESET)
@@ -298,7 +298,7 @@ if __name__ == '__main__':
         if args.report:
             if not os.path.exists("analysis_report"):
                 os.mkdir("analysis_report")
-            file_report = others_report(file_info(args.filename))
+            file_report = others_report(file_info(args.filename), args.strings)
 
     if args.api_key and internet_connection:
         virus_check = virustotal(args.filename, args.api_key)
@@ -574,6 +574,8 @@ if __name__ == '__main__':
         if args.document:
             malicious_document = is_malicious_document(filename=args.filename)
             if args.report == "output":
+                pass
+            else:
                 print(
                     colors.BOLD + colors.YELLOW + "These Yara Rules to be used with documents to find if they have been crafted to leverage malicious code.\nResult: " + colors.RESET)
                 if malicious_document:
