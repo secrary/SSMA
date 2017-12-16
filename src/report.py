@@ -61,7 +61,7 @@ class pe_report:
         return json.dumps(obj, indent=4, sort_keys=False)
 
 class elf_report:
-    def __init__(self, elf, report):
+    def __init__(self, elf, report, strings):
         self.filename = elf.filename
         self.file_info = elf.file_info(report)
         self.checksec = elf.checksec()
@@ -70,8 +70,8 @@ class elf_report:
         self.program_header = elf.program_header().read().decode('utf-8')
         self.section_header = elf.section_header().read().decode('utf-8')
         self.symbols = elf.symbols().read().decode('utf-8')
-        self.ascii_strings = ascii_strings(self.filename)
-        self.unicode_strings = unicode_strings(self.filename)
+        self.ascii_strings = ascii_strings(self.filename, strings)
+        self.unicode_strings = unicode_strings(self.filename, strings)
 
     def domains(self, domains):
         self.domains = domains
@@ -117,11 +117,11 @@ class elf_report:
         return json.dumps(obj, indent=4, sort_keys=False)
 
 class others_report:
-    def __init__(self, other):
+    def __init__(self, other, strings):
         self.filename = os.path.basename(other[0])
         self.file_info = other
-        self.ascii_strings = ascii_strings(self.filename)
-        self.unicode_strings = unicode_strings(self.filename)
+        self.ascii_strings = ascii_strings(self.filename, strings)
+        self.unicode_strings = unicode_strings(self.filename, strings)
 
     def domains(self, domains):
         self.domains = domains
