@@ -1,6 +1,6 @@
 FROM python:3.5.3
 
-LABEL maintainer "https://github.com/pielco11"
+LABEL maintainer="https://github.com/pielco11"
 LABEL malice.plugin.repository = "https://github.com/secrary/SSMA.git"
 LABEL malice.plugin.category="av"
 LABEL malice.plugin.mime="*"
