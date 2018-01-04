@@ -4,7 +4,8 @@ Added by Pielco11
 """
 
 class MarkDown:
-    def __init__(self, [Sections, Functions, Flags, Doms, IPs, Emails]):
+    def __init__(self, args):
+        [Sections, Functions, Flags, Doms, IPs, Emails] = args
         self.max        = self.findMax([Sections, Functions, Flags, Doms, IPs, Emails])
         self.nSections  = str(len(Sections))
         self.nFunctions = str(len(Functions))
@@ -14,12 +15,14 @@ class MarkDown:
         self.nIPs       = str(len(IPs))
         self.nEmails    = str(len(Emails))
         self.table      = "#### SSMA"+"\n"
-        self.table     += "| Sections          | Functions          | Flags          | Doms          | IPs          | Emails          |\n"
-        self.table     += "|:-----------------:|:------------------:|:--------------:|:-------------:|:------------:|:---------------:|\n"
-        self.table     += "| " + nSections + " | " + nFunctions + " | " + nFlags + " | " + nDoms + " | " + nIPs + " | " + nEmails + " |\n"
-        self.getlDoms()
+        self.table     += "| Sections               | Functions               | Flags               | Doms               | IPs               | Emails               |\n"
+        self.table     += "|:----------------------:|:-----------------------:|:-------------------:|:------------------:|:-----------------:|:--------------------:|\n"
+        self.table     += "| " + self.nSections + " | " + self.nFunctions + " | " + self.nFlags + " | " + self.nDoms + " | " + self.nIPs + " | " + self.nEmails + " |\n"
+        self.getlDoms(self.lDoms, [Sections, Functions, Flags, Doms, IPs, Emails])
+        self.addRows([Sections, Functions, Flags, Doms, IPs, Emails])
 
-    def getlDoms(self, self.lDoms, [Sections, Functions, Flags, Doms, IPs, Emails]):
+    def getlDoms(self, lDoms, args):
+        [Sections, Functions, Flags, Doms, IPs, Emails] = args
         for d in range(len(Doms.get("malware_domains"))):
             self.lDoms.append(Doms.get("malware_domains")[d])
         for d in range(len(Doms.get("normal_domains"))):
@@ -28,20 +31,24 @@ class MarkDown:
     def write(self):
         return self.table
 
-    def findMax(self, [Sections, Functions, Flags, Doms, IPs, Emails]):
-        max = []
+    def findMax(self, args):
+        [Sections, Functions, Flags, Doms, IPs, Emails] = args
+        max = 0
         for arg in [Sections, Functions, Flags, Doms, IPs, Emails]:
-            if len(arg) > len(max):
-                max = arg
+            if len(arg) > max:
+                max = len(arg)
         return max
 
-    def addRows(self, [Sections, Functions, Flags, Doms, IPs, Emails], self.max, self.table):
+    def addRows(self, args):
+        [Sections, Functions, Flags, Doms, IPs, Emails] = args
         for m in range(self.max):
             try:
-                for s in enumerate(Sections):
-                    if s[0] == m:
-                        sec  = s[1][0]
-                self.table += "| " sec + " | "
+                if m < len(Sections):
+                    for s, v in enumerate(Sections):
+                        if s == m:
+                            self.table += "| " + v + " | "
+                else:
+                    self.table += "| | "
             except IndexError:
                 self.table += "| | "
             try:
@@ -54,7 +61,7 @@ class MarkDown:
                 self.table += " | "
             try:
                 self.table += Doms[m] + " | "
-            except IndexError:
+            except KeyError:
                 self.table += " | "
             try:
                 self.table += IPs[m] + " | "
