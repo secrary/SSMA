@@ -7,3 +7,4 @@ gitpython
 pyelftools
 elasticsearch
 uuid
+py3dns
