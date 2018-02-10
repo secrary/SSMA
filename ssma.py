@@ -629,7 +629,7 @@ if __name__ == '__main__':
                 file_report.write()
 
             else:
-                print(colors.BOLD + "\tNothing found" + colors.RESET)
+                print(colors.BOLD + "\tAnalysis Complete" + colors.RESET)
                 print("================================================================================")
                 exit()
     if args.report == "output":
@@ -639,10 +639,14 @@ if __name__ == '__main__':
             hashFile = hashlib.sha256(data).hexdigest()
             if args.table:
                 jd = json.loads(rDump)
-                nSections = len(jd.get("sections").get("sections"))
-                nFunctions = len(jd.get("imports"))
-                md = markdown.MarkDown(nSections, nFunctions)
-                mdOut = md.write()
+                Sections   = jd.get("sections").get("sections")
+                Functions  = jd.get("imports")
+                Flags      = jd.get("file_header").get("flags")
+                Doms       = jd.get("malware_domains").get("Domains")
+                IPs        = jd.get("malware_domains").get("IP-addresses")
+                Emails     = jd.get("malware_domains").get("Email")
+                md         = markdown.MarkDown([Sections, Functions, Flags, Doms, IPs, Emails])
+                mdOut      = md.write()
                 print(mdOut)
                 try:
                     with nostderr():
