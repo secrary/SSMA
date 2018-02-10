@@ -275,7 +275,7 @@ class PEScanner:
             else:
                 print("Number of Sections: " + str(number_of_section))
             print()
-            print("{} {} {} {} {} {}".format(*"Section VirtualAddress VirtualSize SizeofRawData Entropy_of_Sections MD5_Hash_of_PE_Sections".split()))
+            print("{} {} {} {} {} {}".format(*"Section VirtualAddress VirtualSize SizeofRawData Sections_MD5_Hash Section_Entropy".split()))
         h_l_entropy = False
         suspicious_size_of_raw_data = False
         virtual_size = []
@@ -303,7 +303,7 @@ class PEScanner:
                     "{:7} {:14} {:11} {:13} {:7} {:14}".format(sec_name,
                                                          hex(section.VirtualAddress),
                                                          section.Misc_VirtualSize,
-                                                         section.SizeOfRawData,entropy, (section.get_hash_md5())
+                                                         section.SizeOfRawData,(section.get_hash_md5()), entropy
                                                           if not for_section else colors.LIGHT_RED + str(
                                                              entropy) + colors.RESET))
             section_info = {
