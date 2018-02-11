@@ -629,7 +629,7 @@ if __name__ == '__main__':
                 file_report.write()
 
             else:
-                print(colors.BOLD + "\tNothing found" + colors.RESET)
+                print(colors.BOLD + "\tAnalysis Complete" + colors.RESET)
                 print("================================================================================")
                 exit()
     if args.report == "output":
