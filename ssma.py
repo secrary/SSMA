@@ -637,21 +637,22 @@ if __name__ == '__main__':
         with open(args.filename, "rb") as ff:
             data = ff.read()
             hashFile = hashlib.sha256(data).hexdigest()
+            jd = json.loads(rDump)
+            Sections   = jd.get("sections").get("sections")
+            Functions  = jd.get("imports")
+            Flags      = jd.get("file_header").get("flags")
+            Doms       = jd.get("malware_domains").get("Domains")
+            IPs        = jd.get("malware_domains").get("IP-addresses")
+            Emails     = jd.get("malware_domains").get("Email")
+            md         = markdown.MarkDown([Sections, Functions, Flags, Doms, IPs, Emails])
+            mdOut      = md.write()
+            body = file_report.malice_dump(mdOut)
             if args.table:
-                jd = json.loads(rDump)
-                Sections   = jd.get("sections").get("sections")
-                Functions  = jd.get("imports")
-                Flags      = jd.get("file_header").get("flags")
-                Doms       = jd.get("malware_domains").get("Domains")
-                IPs        = jd.get("malware_domains").get("IP-addresses")
-                Emails     = jd.get("malware_domains").get("Email")
-                md         = markdown.MarkDown([Sections, Functions, Flags, Doms, IPs, Emails])
-                mdOut      = md.write()
                 print(mdOut)
                 try:
                     with nostderr():
                         es = Elasticsearch(["elasticsearch", "127.0.0.1", os.environ.get("MALICE_ELASTICSEARCH")])
-                        res = es.update(index="malice", doc_type='sample', id=os.environ.get('MALICE_SCANID',hashFile), body={"\"doc\": " + rDump})
+                        res = es.update(index="malice", doc_type='sample', id=os.environ.get('MALICE_SCANID',hashFile), body=body)
                 except:
                     pass
             else:
@@ -659,7 +660,7 @@ if __name__ == '__main__':
                 try:
                     with nostderr():
                         es = Elasticsearch(["elasticsearch", "127.0.0.1", os.environ.get("MALICE_ELASTICSEARCH")])
-                        res = es.update(index="malice", doc_type='sample', id=os.environ.get('MALICE_SCANID',hashFile), body={"\"doc\": " + rDump})
+                        res = es.update(index="malice", doc_type='sample', id=os.environ.get('MALICE_SCANID',hashFile), body=body)
                 except:
                     pass
     else:

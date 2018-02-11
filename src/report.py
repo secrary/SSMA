@@ -60,6 +60,22 @@ class pe_report:
         }
         return json.dumps(obj, indent=4, sort_keys=False)
 
+    def malice_dump(self, md):
+        obj = {
+            "plugins": {
+                "av": {
+                    "ssma": {
+                        "engine": "1.0",
+                        "infected": True, # setting this as default
+                        "markdown": md,
+                        "result": "scanned",
+                        "updated": "20171104"
+                        }
+                    }
+                }
+            }
+        return json.dumps(obj, indent=4, sort_keys=False)
+
 class elf_report:
     def __init__(self, elf, report, strings):
         self.filename = elf.filename
@@ -116,6 +132,22 @@ class elf_report:
 
         return json.dumps(obj, indent=4, sort_keys=False)
 
+    def malice_dump(self, md):
+        obj = {
+            "plugins": {
+                "av": {
+                    "ssma": {
+                        "engine": "1.0",
+                        "infected": True, # setting this as default
+                        "markdown": md,
+                        "result": "scanned",
+                        "updated": "20171104"
+                        }
+                    }
+                }
+            }
+        return json.dumps(obj, indent=4, sort_keys=False)
+
 class others_report:
     def __init__(self, other, strings):
         self.filename = os.path.basename(other[0])
@@ -152,4 +184,20 @@ class others_report:
             "unicode_strings": self.unicode_strings
         }
 
+        return json.dumps(obj, indent=4, sort_keys=False)
+
+    def malice_dump(self, md):
+        obj = {
+            "plugins": {
+                "av": {
+                    "ssma": {
+                        "engine": "1.0",
+                        "infected": True, # setting this as default
+                        "markdown": md,
+                        "result": "scanned",
+                        "updated": "20171104"
+                        }
+                    }
+                }
+            }
         return json.dumps(obj, indent=4, sort_keys=False)
