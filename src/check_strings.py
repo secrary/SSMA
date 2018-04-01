@@ -36,7 +36,7 @@ def is_email(list_of_strings):
     f = filter(email_pattern.match, list_of_strings)
     F = []
     for e in list(f):
-        if validate_email(e, check_mx=True):
+        if validate_email(e):
             F.append(e)
 
     return F
