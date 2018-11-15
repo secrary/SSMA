@@ -2,6 +2,8 @@ import re
 from urllib.parse import urlparse
 import subprocess
 
+from ext.validate_email import validate_email
+
 
 def is_ip(list_of_strings):
     ipv4_pattern = re.compile(
@@ -32,8 +34,12 @@ def is_email(list_of_strings):
     email_pattern = re.compile(r'(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)')
 
     f = filter(email_pattern.match, list_of_strings)
+    F = []
+    for e in list(f):
+        if validate_email(e):
+            F.append(e)
 
-    return list(f)
+    return F
 
 
 def ascii_strings(filename, enable):
