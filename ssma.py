@@ -110,7 +110,7 @@ if __name__ == '__main__':
         if args.report == "output":
             pass
         else:
-            print(colors.BOLD + colors.YELLOW + "File Details: " + colors.RESET)
+            print(colors.BOLD + colors.BLUE + "File Details: " + colors.RESET)
         for n in pe.file_info(args.report, False):
             if args.report == "output":
                 pass
@@ -188,7 +188,7 @@ if __name__ == '__main__':
         else:
             if check_imports_result:
                 print(
-                    colors.BOLD + colors.YELLOW + "This file contains a list of Windows functions commonly used by malware.\nFor more information use the Microsoft documentation.\n" + colors.RESET)
+                    colors.BOLD + colors.BLUE + "This file contains a list of Windows functions commonly used by malware.\nFor more information use the Microsoft documentation.\n" + colors.RESET)
 
                 for n in check_imports_result:
                     n = n.split("^")
@@ -205,7 +205,7 @@ if __name__ == '__main__':
         if args.report == "output":
             pass
         else:
-            print(colors.BOLD + colors.YELLOW + "File Details: " + colors.RESET)
+            print(colors.BOLD + colors.BLUE + "File Details: " + colors.RESET)
         for n in elf.file_info(args.report):
             if args.report == "output":
                 print('\t', n)
@@ -223,7 +223,7 @@ if __name__ == '__main__':
             if args.report == "output":
                 pass
             else:
-                print(colors.BOLD + colors.YELLOW + "Dependencies: " + colors.RESET)
+                print(colors.BOLD + colors.BLUE + "Dependencies: " + colors.RESET)
                 for line in depends:
                     line = line.decode('utf-8', 'ignore').replace("\n", "")
                     print(line)
@@ -236,7 +236,7 @@ if __name__ == '__main__':
             if args.report == "output":
                 pass
             else:
-                print(colors.BOLD + colors.YELLOW + "Program Header Information: " + colors.RESET)
+                print(colors.BOLD + colors.BLUE + "Program Header Information: " + colors.RESET)
                 for line in prog_header:
                     line = line.decode('utf-8', 'ignore').replace("\n", "")
                     print(line)
@@ -249,7 +249,7 @@ if __name__ == '__main__':
             if args.report == "output":
                 pass
             else:
-                print(colors.BOLD + colors.YELLOW + "Section Header Information: " + colors.RESET)
+                print(colors.BOLD + colors.BLUE + "Section Header Information: " + colors.RESET)
                 for line in sect_header:
                     line = line.decode('utf-8', 'ignore').replace("\n", "")
                     print(line)
@@ -262,7 +262,7 @@ if __name__ == '__main__':
             if args.report == "output":
                 pass
             else:
-                print(colors.BOLD + colors.YELLOW + "Symbol Information: " + colors.RESET)
+                print(colors.BOLD + colors.BLUE + "Symbol Information: " + colors.RESET)
                 for line in syms:
                     line = line.decode('utf-8', 'ignore').replace("\n", "")
                     print(line)
@@ -275,7 +275,7 @@ if __name__ == '__main__':
             if args.report == "output":
                 pass
             else:
-                print(colors.BOLD + colors.YELLOW + "CheckSec Information: " + colors.RESET)
+                print(colors.BOLD + colors.BLUE + "CheckSec Information: " + colors.RESET)
                 for key, value in checksec.items():
                     print(key + ": " + str(value))
                 print()
@@ -288,7 +288,7 @@ if __name__ == '__main__':
             file_report = (elf, args.report, args.strings)
 
     else:
-        print(colors.BOLD + colors.YELLOW + "File Details: " + colors.RESET)
+        print(colors.BOLD + colors.BLUE + "File Details: " + colors.RESET)
         for n in file_info(args.filename):
             print('\t', n)
         print()
@@ -303,7 +303,7 @@ if __name__ == '__main__':
     if args.api_key and internet_connection:
         virus_check = virustotal(args.filename, args.api_key)
         if virus_check[0] == "scan_result":
-            print(colors.BOLD + colors.YELLOW + "Virustotal:" + colors.RESET)
+            print(colors.BOLD + colors.BLUE + "Virustotal:" + colors.RESET)
             for n in virus_check[1]:
                 n = n.split("^")
                 print('\t' + colors.CYAN + n[0] + colors.RESET + "-" + colors.LIGHT_RED + n[1] + colors.RESET)
@@ -332,7 +332,7 @@ if __name__ == '__main__':
             if args.report == "output":
                 pass
             else:
-                print(colors.BOLD + colors.YELLOW + "Possible domains in strings of the file: " + colors.RESET)
+                print(colors.BOLD + colors.BLUE + "Possible domains in strings of the file: " + colors.RESET)
                 mal_domains = ransomware_and_malware_domain_check(list(strings[0]))
                 for n in mal_domains[0]:
                     print('\t', n)
@@ -357,7 +357,7 @@ if __name__ == '__main__':
         if args.report == "output":
             pass
         else:
-            print(colors.BOLD + colors.YELLOW + "Possible IP addresses in strings of the file: " + colors.RESET)
+            print(colors.BOLD + colors.BLUE + "Possible IP addresses in strings of the file: " + colors.RESET)
             for n in strings[1]:
                 print('\t', n)
             print()
@@ -368,7 +368,7 @@ if __name__ == '__main__':
         if args.report == "output":
             pass
         else:
-            print(colors.BOLD + colors.YELLOW + "Possible E-Mail addresses in strings of the file:" + colors.RESET)
+            print(colors.BOLD + colors.BLUE + "Possible E-Mail addresses in strings of the file:" + colors.RESET)
             for n in strings[2]:
                 print('\t', n)
             print()
@@ -396,7 +396,7 @@ if __name__ == '__main__':
             pass
         else:
             print(
-                colors.BOLD + colors.YELLOW + "Scan file using Yara-rules.\nWith Yara rules you can create a \"description\" of malware families to detect new samples.\n" + colors.BOLD + colors.CYAN + "\tFor more information: https://virustotal.github.io/yara/\n" + colors.RESET)
+                colors.BOLD + colors.BLUE + "Scan file using Yara-rules.\nWith Yara rules you can create a \"description\" of malware families to detect new samples.\n" + colors.BOLD + colors.CYAN + "\tFor more information: https://virustotal.github.io/yara/\n" + colors.RESET)
         if not os.path.exists("rules"):
             os.mkdir("rules")
         if not os.path.exists("rules_compiled"):
@@ -415,7 +415,7 @@ if __name__ == '__main__':
                     pass
                 else:
                     print(
-                        colors.BOLD + colors.YELLOW + "These Yara rules specialised on the identification of well-known malware.\nResult: " + colors.RESET)
+                        colors.BOLD + colors.BLUE + "These Yara rules specialised on the identification of well-known malware.\nResult: " + colors.RESET)
                     for n in malicious_software:
                         try:
                             print("\t {} - {}".format(n, n.meta['description']))
@@ -431,7 +431,7 @@ if __name__ == '__main__':
                     pass
                 else:
                     print(
-                        colors.BOLD + colors.YELLOW + "These Yara Rules aimed to detect well-known sofware packers, that can be used by malware to hide itself.\nResult: " + colors.RESET)
+                        colors.BOLD + colors.BLUE + "These Yara Rules aimed to detect well-known software packers, that can be used by malware to hide itself.\nResult: " + colors.RESET)
                     for n in packed:
                         try:
                             print("\t {} - {}".format(n, n.meta['description']))
@@ -447,8 +447,8 @@ if __name__ == '__main__':
                     pass
                 else:
                     print(
-                        colors.BOLD + colors.YELLOW + "These Yara rules aimed to detect the existence of cryptographic algoritms." + colors.RESET)
-                    print(colors.YELLOW + "Detected cryptographic algorithms: " + colors.RESET)
+                        colors.BOLD + colors.BLUE + "These Yara rules aimed to detect the existence of cryptographic algorithms." + colors.RESET)
+                    print(colors.BLUE + "Detected cryptographic algorithms: " + colors.RESET)
                     for n in crypto:
                         try:
                             print("\t {} - {}".format(n, n.meta['description']))
@@ -464,7 +464,7 @@ if __name__ == '__main__':
                     pass
                 else:
                     print(
-                        colors.BOLD + colors.YELLOW + "These Yara Rules aimed to detect anti-debug and anti-virtualization techniques used by malware to evade automated analysis.\nResult: " + colors.RESET)
+                        colors.BOLD + colors.BLUE + "These Yara Rules aimed to detect anti-debug and anti-virtualization techniques used by malware to evade automated analysis.\nResult: " + colors.RESET)
                     for n in anti_vm:
                         try:
                             print("\t {} - {}".format(n, n.meta['description']))
@@ -483,7 +483,7 @@ if __name__ == '__main__':
                         pass
                     else:
                         print(
-                            colors.BOLD + colors.YELLOW + "These Yara Rules are created by yourself and aimed to detecte something you need.\nResult: " + colors.RESET)
+                            colors.BOLD + colors.BLUE + "These Yara Rules are created by yourself and aimed to detecte something you need.\nResult: " + colors.RESET)
                         for n in your_target:
                             try:
                                 print("\t {} - {}".format(n, n.meta['description']))
@@ -548,7 +548,7 @@ if __name__ == '__main__':
                         pass
                     else:
                         print(
-                            colors.BOLD + colors.YELLOW + "These Yara Rules are created by yourself and aimed to detecte something you need.\nResult: " + colors.RESET)
+                            colors.BOLD + colors.BLUE + "These Yara Rules are created by yourself and aimed to detecte something you need.\nResult: " + colors.RESET)
                         for n in your_target:
                             try:
                                 print("\t {} - {}".format(n, n.meta['description']))
@@ -577,7 +577,7 @@ if __name__ == '__main__':
                 pass
             else:
                 print(
-                    colors.BOLD + colors.YELLOW + "These Yara Rules to be used with documents to find if they have been crafted to leverage malicious code.\nResult: " + colors.RESET)
+                    colors.BOLD + colors.BLUE + "These Yara Rules to be used with documents to find if they have been crafted to leverage malicious code.\nResult: " + colors.RESET)
                 if malicious_document:
                     for n in malicious_document:
                         try:
@@ -596,7 +596,7 @@ if __name__ == '__main__':
                         pass
                     else:
                         print(
-                            colors.BOLD + colors.YELLOW + "These Yara Rules are created by yourself and aimed to detecte something you need.\nResult: " + colors.RESET)
+                            colors.BOLD + colors.BLUE + "These Yara Rules are created by yourself and aimed to detecte something you need.\nResult: " + colors.RESET)
                         for n in your_target:
                             try:
                                 print("\t {} - {}".format(n, n.meta['description']))
@@ -664,4 +664,4 @@ if __name__ == '__main__':
                 except:
                     pass
     else:
-        print(colors.YELLOW + "Ups... " + colors.CYAN + "That's all :)" + colors.RESET + "\n")
+        print(colors.BLUE + "Ups... " + colors.CYAN + "That's all :)" + colors.RESET + "\n")
