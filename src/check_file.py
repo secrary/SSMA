@@ -181,6 +181,10 @@ class PEScanner:
             pass
         return ''
 
+     # this requires pefile v1.2.10-139 +
+    def get_imphash(self):
+            return self.pe.get_imphash()    
+
     def check_date(self, is_report):
         val = self.pe.FILE_HEADER.TimeDateStamp
         pe_year = int(time.ctime(val).split()[-1])
@@ -202,6 +206,7 @@ class PEScanner:
                 info.append("Type: {}".format(magic.from_file(self.filename, mime=True)))
                 info.append("MD5:  {}".format(hashlib.md5(file).hexdigest()))
                 info.append("SHA1: {}".format(hashlib.sha1(file).hexdigest()))
+                info.append("Imphash: {}".format(self.get_imphash()))
                 if ssdeep_r:
                     info.append("ssdeep: {}".format(self.get_ssdeep()))
                 info.append("Date: {}".format(time.ctime(self.pe.FILE_HEADER.TimeDateStamp)))
@@ -219,6 +224,7 @@ class PEScanner:
                 info.append("Type: {}".format(magic.from_file(self.filename, mime=True)))
                 info.append("MD5:  {}".format(hashlib.md5(file).hexdigest()))
                 info.append("SHA1: {}".format(hashlib.sha1(file).hexdigest()))
+                info.append("Imphash: {}".format(self.get_imphash()))
                 if ssdeep_r:
                     info.append("ssdeep: {}".format(self.get_ssdeep()))
                 info.append("Date: {}".format(time.ctime(self.pe.FILE_HEADER.TimeDateStamp)))
