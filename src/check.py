@@ -15,12 +15,12 @@ def is_file_packed(filename):
 
 
 def is_malicious_document(filename):
-    if not os.path.exists("rules_compiled/malicious_Documents"):
-        os.mkdir("rules_compiled/malicious_Documents")
-    for n in os.listdir("rules/malicious_Documents"):
-        rule = yara.compile("rules/malicious_Documents/" + n)
-        rule.save("rules_compiled/malicious_Documents/" + n)
-        rule = yara.load("rules_compiled/malicious_Documents/" + n)
+    if not os.path.exists("rules_compiled/malicious_documents"):
+        os.mkdir("rules_compiled/malicious_documents")
+    for n in os.listdir("rules/malicious_documents"):
+        rule = yara.compile("rules/malicious_documents/" + n)
+        rule.save("rules_compiled/malicious_documents/" + n)
+        rule = yara.load("rules_compiled/malicious_documents/" + n)
         m = rule.match(filename)
         if m:
             return m
